@@ -1,0 +1,46 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Stage 2: the VpnService is a foreground service (persistent notification). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <!-- Stage 4: Android 13+ needs this before the persistent "firewall active"
+         notification is visible. Without it the foreground service still runs,
+         the notification is just hidden — the UI is required to say so rather
+         than pretend the user can dismiss the always-on "app running" chip.
+         On 24-32 the declaration is inert (no runtime prompt exists). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- TODO(play-policy): QUERY_ALL_PACKAGES needs a Play Console declaration
+         before any public release. Sideload-only for now. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- Stage 3: UsageStatsManager's own javadoc requires this manifest entry.
+         It is signature|privileged|appop, so a normal app is never actually
+         granted it: what grants access is the matching app-op the user toggles
+         in Settings > Usage access, which is what ForegroundAppWatcher reads. -->
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <!-- Stage 6: required for the direct Doze/App-Standby exemption dialog. Without
+         it the intent still resolves, but Android ignores the request; the code
+         falls back to the plain optimization list screen either way.
+         TODO(play-policy): justified in-context (an always-on firewall is killed by
+         battery optimization), but Google Play restricts this permission and asks
+         for a declaration before any public release. Sideload-only for now. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <application>
+        <!-- TODO(play-policy): specialUse needs a written justification if ever
+             submitted to Google Play. Sideload-only for now. -->
+        <service
+            android:name="com.souljsx.spot.vpn.VpnFirewallService"
+            android:permission="android.permission.BIND_VPN_SERVICE"
+            android:foregroundServiceType="specialUse"
+            android:exported="false">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Per-app mobile data firewall" />
+            <intent-filter>
+                <action android:name="android.net.VpnService" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>

@@ -1,0 +1,96 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "canvas-background": "#F2F2F7",
+          "surface-card": "#FFFFFF",
+          "system-blue": "#007AFF",
+          "system-green": "#34C759",
+          "system-orange": "#FF9500",
+          "text-primary": "#000000",
+          "text-secondary": "#8E8E93",
+          "system-gray-5": "#E5E5EA",
+          "system-gray-6": "#F2F2F7",
+          "system-separator": "rgba(60, 60, 67, 0.12)"
+        },
+        borderRadius: {
+          "DEFAULT": "0.5rem",
+          "lg": "0.75rem",
+          "xl": "1rem",
+          "2xl": "1.125rem",
+          "full": "9999px"
+        },
+        fontFamily: {
+          sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Text", "SF Pro Display", "Inter", "system-ui", "sans-serif"]
+        }
+      }
+    }
+  };
+</script><style>
+  @layer base {
+    html, body {
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      overscroll-behavior: none;
+      background-color: #F2F2F7;
+    }
+    .pb-safe {
+      padding-bottom: env(safe-area-inset-bottom, 16px);
+    }
+    .pt-safe {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .ios-card {
+    background-color: #FFFFFF;
+    border-radius: 18px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+</style></head><body class="bg-[#F2F2F7] text-text-primary flex flex-col min-h-screen selection:bg-system-blue/20"><header class="fixed top-0 w-full z-50 bg-[#F2F2F7]/80 backdrop-blur-xl border-b border-system-separator pt-safe"><div class="h-12 px-4 flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-full bg-system-blue/10 text-system-blue flex items-center justify-center font-bold shadow-xs"><span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span></div><div class="flex flex-col"><span class="text-[17px] font-semibold text-black tracking-tight leading-tight">Terra Guard</span><span class="text-[11px] font-medium text-text-secondary tracking-normal leading-tight">Active Protection</span></div></div><div class="flex items-center gap-2"><button class="w-8 h-8 rounded-full bg-system-gray-5 flex items-center justify-center text-text-secondary hover:text-black transition-colors focus:outline-none" type="button"><span class="material-symbols-outlined text-[20px]">person</span></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-[calc(3rem+env(safe-area-inset-top,0px))] pb-24 bg-[#F2F2F7] max-w-[480px] mx-auto min-h-screen"><div class="flex flex-col w-full px-4 pt-4 pb-6"><div class="flex flex-col pt-1 pb-1"><h1 class="text-[28px] font-bold tracking-tight text-black leading-tight">Good afternoon, Sarah</h1><p class="text-[15px] text-text-secondary mt-0.5">Your phone is safe, quiet, and saving data.</p></div><div class="relative flex flex-col items-center justify-center my-6"><div class="absolute w-64 h-64 rounded-full bg-system-green/20 opacity-80 blur-3xl pointer-events-none transition-all duration-700" id="ambient-glow"></div><div class="absolute w-52 h-52 rounded-full border border-system-green/30 animate-ping pointer-events-none opacity-40" style="animation-duration: 3.5s;"></div><button class="relative group z-10 w-44 h-44 rounded-full bg-gradient-to-b from-[#34C759] to-[#28A745] text-white flex flex-col items-center justify-center shadow-[0_12px_32px_rgba(52,199,89,0.38)] active:scale-95 transition-all duration-300 select-none cursor-pointer border-4 border-white/25" id="toggle-shield"><div class="w-13 h-13 rounded-full bg-white/20 flex items-center justify-center mb-1.5 backdrop-blur-md"><span class="material-symbols-outlined text-[36px] text-white" id="shield-icon" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span></div><span class="text-[19px] font-bold text-white tracking-tight leading-snug" id="shield-status-text">Connected</span><span class="text-[12px] font-medium text-white/90 mt-0.5" id="shield-sub-text">Protected • Tap to pause</span></button></div><div class="flex items-center justify-center mb-6"><div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white rounded-full border border-black/5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"><span class="w-2 h-2 rounded-full bg-system-green shadow-[0_0_6px_rgba(52,199,89,0.6)]" id="status-dot"></span><span class="text-[13px] font-medium text-black">Frankfurt • Safe connection</span><button class="ml-1 text-[13px] font-medium text-system-blue hover:opacity-75 transition-opacity" type="button">Change</button></div></div><div class="grid grid-cols-1 gap-3.5 w-full"><div class="ios-card p-4"><div class="flex items-start gap-3.5"><div class="w-10 h-10 rounded-xl bg-system-blue/10 text-system-blue flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[22px]">eco</span></div><div class="flex-1 min-w-0"><div class="flex items-center justify-between"><span class="text-[13px] text-text-secondary font-medium">Data Saved Today</span><span class="text-[11px] text-system-blue bg-system-blue/10 font-semibold px-2 py-0.5 rounded-full">+35% vs yesterday</span></div><div class="text-[24px] text-black font-bold tracking-tight mt-0.5">1.4 GB</div><p class="text-[13px] text-text-secondary mt-0.5 leading-snug">About 45 minutes of smooth video saved on your mobile plan.</p><div class="w-full bg-system-gray-5 rounded-full h-1.5 mt-3 overflow-hidden"><div class="bg-system-blue h-full rounded-full transition-all duration-500" style="width: 68%;"></div></div></div></div></div><div class="ios-card p-4"><div class="flex items-start gap-3.5"><div class="w-10 h-10 rounded-xl bg-system-green/10 text-system-green flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-[22px]" style="font-variation-settings: 'FILL' 1;">verified_user</span></div><div class="flex-1 min-w-0"><div class="flex items-center justify-between"><span class="text-[13px] text-text-secondary font-medium">Protection Status</span><span class="inline-flex items-center gap-1 text-[12px] text-system-green font-semibold bg-system-green/10 px-2 py-0.5 rounded-full"><span class="material-symbols-outlined text-[14px]">check_circle</span>All clear</span></div><div class="text-[20px] text-black font-bold tracking-tight mt-0.5">12 trackers stopped</div><p class="text-[13px] text-text-secondary mt-0.5 leading-snug">Websites couldn't follow you around or show pushy pop-up ads today.</p></div></div></div><div class="ios-card p-4"><div class="flex items-center justify-between"><div class="flex items-center gap-3 min-w-0"><div class="w-10 h-10 rounded-xl bg-system-gray-6 text-black flex items-center justify-center flex-shrink-0 border border-black/5"><span class="material-symbols-outlined text-[20px]">wifi_lock</span></div><div class="truncate"><p class="text-[15px] text-black font-semibold tracking-tight truncate">Home Coffee Shop Wi-Fi</p><p class="text-[12px] text-text-secondary truncate mt-0.5">Auto-protected automatically</p></div></div><span class="inline-flex items-center gap-1 text-[12px] text-system-blue bg-system-blue/10 px-2.5 py-1 rounded-full font-semibold flex-shrink-0 ml-2"><span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">check</span>Verified</span></div></div></div></div><script>
+  (function() {
+    const btn = document.getElementById('toggle-shield');
+    const glow = document.getElementById('ambient-glow');
+    const icon = document.getElementById('shield-icon');
+    const statusText = document.getElementById('shield-status-text');
+    const subText = document.getElementById('shield-sub-text');
+    const dot = document.getElementById('status-dot');
+    
+    let isProtected = true;
+
+    btn.addEventListener('click', function() {
+      isProtected = !isProtected;
+      
+      if (isProtected) {
+        btn.classList.remove('from-neutral-400', 'to-neutral-500', 'shadow-[0_12px_24px_rgba(0,0,0,0.15)]');
+        btn.classList.add('from-[#34C759]', 'to-[#28A745]', 'shadow-[0_12px_32px_rgba(52,199,89,0.38)]');
+        glow.className = 'absolute w-64 h-64 rounded-full bg-system-green/20 opacity-80 blur-3xl pointer-events-none transition-all duration-700';
+        icon.textContent = 'shield_with_heart';
+        statusText.textContent = 'Connected';
+        subText.textContent = 'Protected • Tap to pause';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-system-green shadow-[0_0_6px_rgba(52,199,89,0.6)]';
+      } else {
+        btn.classList.remove('from-[#34C759]', 'to-[#28A745]', 'shadow-[0_12px_32px_rgba(52,199,89,0.38)]');
+        btn.classList.add('from-neutral-400', 'to-neutral-500', 'shadow-[0_12px_24px_rgba(0,0,0,0.15)]');
+        glow.className = 'absolute w-64 h-64 rounded-full bg-neutral-300 opacity-20 blur-2xl pointer-events-none transition-all duration-700';
+        icon.textContent = 'shield';
+        statusText.textContent = 'Paused';
+        subText.textContent = 'Tap to resume';
+        if (dot) dot.className = 'w-2 h-2 rounded-full bg-neutral-400';
+      }
+    });
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#F2F2F7]/85 backdrop-blur-xl border-t border-system-separator" data-active-classes="text-system-blue font-semibold"><div class="max-w-[480px] mx-auto flex justify-around items-center h-14 px-2"><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 py-1 transition-colors text-system-blue" data-path="protection" href="#"><span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">shield</span><span class="text-[10px] font-semibold tracking-tight">Protection</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 py-1 transition-colors text-text-secondary hover:text-black" data-path="data-saver" href="#"><span class="material-symbols-outlined text-[24px]">bolt</span><span class="text-[10px] font-medium tracking-tight">Data Saver</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 py-1 transition-colors text-text-secondary hover:text-black" data-path="locations" href="#"><span class="material-symbols-outlined text-[24px]">public</span><span class="text-[10px] font-medium tracking-tight">Locations</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 py-1 transition-colors text-text-secondary hover:text-black" data-path="settings" href="#"><span class="material-symbols-outlined text-[24px]">settings</span><span class="text-[10px] font-medium tracking-tight">Settings</span></a></div></nav>
+
+</body></html>

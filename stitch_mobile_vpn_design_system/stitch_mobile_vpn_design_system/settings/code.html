@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "canvas-background": "#F2F2F7",
+        "surface-card": "#FFFFFF",
+        "system-blue": "#007AFF",
+        "system-green": "#34C759",
+        "system-orange": "#FF9500",
+        "system-purple": "#AF52DE",
+        "system-teal": "#30B0C7",
+        "text-primary": "#000000",
+        "text-secondary": "#8E8E93",
+        "system-separator": "rgba(60, 60, 67, 0.12)",
+        "system-gray-5": "#E5E5EA",
+        "system-gray-6": "#F2F2F7"
+      },
+      fontFamily: {
+        sans: ["-apple-system", "BlinkMacSystemFont", "Inter", "sans-serif"]
+      }
+    }
+  }
+};</script><style>
+@layer base {
+  html, body {
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    overscroll-behavior: none;
+    background-color: #F2F2F7;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 44px);
+  }
+}
+::-webkit-scrollbar {
+  display: none;
+}
+</style></head><body class="bg-canvas-background text-text-primary flex flex-col min-h-screen selection:bg-system-blue/20">
+<!-- Apple iOS Native Navigation Header -->
+<header class="fixed top-0 w-full z-50 bg-[#F2F2F7]/85 backdrop-blur-xl border-b border-system-separator/60 pt-safe">
+<div class="h-11 px-4 flex items-center justify-between max-w-[480px] mx-auto">
+<div class="w-16"></div>
+<h1 class="text-[17px] font-semibold tracking-tight text-center flex-1">Settings</h1>
+<div class="w-16 flex justify-end">
+<div class="w-7 h-7 rounded-full bg-system-gray-5 flex items-center justify-center text-text-secondary">
+<span class="material-symbols-outlined text-[19px]">account_circle</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Scroll Content -->
+<main class="flex-1 flex flex-col relative w-full pt-[calc(env(safe-area-inset-top,44px)+52px)] pb-28 max-w-[480px] mx-auto">
+<div class="flex flex-col w-full px-4 space-y-6">
+<!-- Group 1: Safety & Privacy -->
+<div>
+<div class="px-4 pb-1.5 text-[13px] font-normal tracking-tight text-text-secondary uppercase">
+        Safety &amp; Privacy
+      </div>
+<div class="bg-surface-card rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+<!-- Toggle Row 1 -->
+<div class="flex items-center justify-between px-4 py-3 min-h-[52px]">
+<div class="flex items-center gap-3 pr-2">
+<div class="w-7 h-7 rounded-[7px] bg-system-blue flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">wifi_lock</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-normal tracking-tight text-text-primary">Public Wi-Fi Protection</span>
+<span class="text-[12px] text-text-secondary leading-tight mt-0.5">Automatically protect on public networks</span>
+</div>
+</div>
+<button aria-checked="true" class="shrink-0 relative w-[51px] h-[31px] rounded-full bg-system-green transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="block w-[27px] h-[27px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transform transition-transform duration-200 ease-in-out translate-x-[22px] mt-[2px] ml-[2px]"></span>
+</button>
+</div>
+<div class="ml-[52px] h-[0.5px] bg-system-separator"></div>
+<!-- Toggle Row 2 -->
+<div class="flex items-center justify-between px-4 py-3 min-h-[52px]">
+<div class="flex items-center gap-3 pr-2">
+<div class="w-7 h-7 rounded-[7px] bg-system-orange flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">pause_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-normal tracking-tight text-text-primary">Pause on Drop</span>
+<span class="text-[12px] text-text-secondary leading-tight mt-0.5">Prevents exposing location when connection drops</span>
+</div>
+</div>
+<button aria-checked="true" class="shrink-0 relative w-[51px] h-[31px] rounded-full bg-system-green transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="block w-[27px] h-[27px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transform transition-transform duration-200 ease-in-out translate-x-[22px] mt-[2px] ml-[2px]"></span>
+</button>
+</div>
+<div class="ml-[52px] h-[0.5px] bg-system-separator"></div>
+<!-- Toggle Row 3 -->
+<div class="flex items-center justify-between px-4 py-3 min-h-[52px]">
+<div class="flex items-center gap-3 pr-2">
+<div class="w-7 h-7 rounded-[7px] bg-system-purple flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">block</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-normal tracking-tight text-text-primary">Block Ads &amp; Trackers</span>
+<span class="text-[12px] text-text-secondary leading-tight mt-0.5">Stops intrusive trackers and saves battery</span>
+</div>
+</div>
+<button aria-checked="true" class="shrink-0 relative w-[51px] h-[31px] rounded-full bg-system-green transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="block w-[27px] h-[27px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transform transition-transform duration-200 ease-in-out translate-x-[22px] mt-[2px] ml-[2px]"></span>
+</button>
+</div>
+</div>
+</div>
+<!-- Group 2: Data Saving -->
+<div>
+<div class="px-4 pb-1.5 text-[13px] font-normal tracking-tight text-text-secondary uppercase">
+        Data Saving
+      </div>
+<div class="bg-surface-card rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+<!-- Toggle Row 1 -->
+<div class="flex items-center justify-between px-4 py-3 min-h-[52px]">
+<div class="flex items-center gap-3 pr-2">
+<div class="w-7 h-7 rounded-[7px] bg-system-teal flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">smart_display</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-normal tracking-tight text-text-primary">Video Quality Saver</span>
+<span class="text-[12px] text-text-secondary leading-tight mt-0.5">Optimizes stream bitrate for mobile networks</span>
+</div>
+</div>
+<button aria-checked="true" class="shrink-0 relative w-[51px] h-[31px] rounded-full bg-system-green transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="block w-[27px] h-[27px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transform transition-transform duration-200 ease-in-out translate-x-[22px] mt-[2px] ml-[2px]"></span>
+</button>
+</div>
+<div class="ml-[52px] h-[0.5px] bg-system-separator"></div>
+<!-- Toggle Row 2 -->
+<div class="flex items-center justify-between px-4 py-3 min-h-[52px]">
+<div class="flex items-center gap-3 pr-2">
+<div class="w-7 h-7 rounded-[7px] bg-system-green flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">photo_size_select_actual</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[15px] font-normal tracking-tight text-text-primary">Compress Pictures</span>
+<span class="text-[12px] text-text-secondary leading-tight mt-0.5">Accelerates web image rendering</span>
+</div>
+</div>
+<button aria-checked="true" class="shrink-0 relative w-[51px] h-[31px] rounded-full bg-system-green transition-colors duration-200 ease-in-out" onclick="toggleSwitch(this)" role="switch" type="button">
+<span class="block w-[27px] h-[27px] rounded-full bg-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] transform transition-transform duration-200 ease-in-out translate-x-[22px] mt-[2px] ml-[2px]"></span>
+</button>
+</div>
+</div>
+</div>
+<!-- Group 3: Help & Support -->
+<div>
+<div class="px-4 pb-1.5 text-[13px] font-normal tracking-tight text-text-secondary uppercase">
+        Help &amp; Support
+      </div>
+<div class="bg-surface-card rounded-2xl overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+<!-- Navigation Row 1 -->
+<a class="flex items-center justify-between px-4 py-3 active:bg-system-gray-5/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-[7px] bg-system-blue flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">menu_book</span>
+</div>
+<span class="text-[15px] font-normal text-text-primary">How it works</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary text-[20px]">chevron_right</span>
+</a>
+<div class="ml-[52px] h-[0.5px] bg-system-separator"></div>
+<!-- Navigation Row 2 -->
+<a class="flex items-center justify-between px-4 py-3 active:bg-system-gray-5/50 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-[7px] bg-system-green flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">chat_bubble</span>
+</div>
+<span class="text-[15px] font-normal text-text-primary">Send feedback</span>
+</div>
+<span class="material-symbols-outlined text-text-secondary text-[20px]">chevron_right</span>
+</a>
+<div class="ml-[52px] h-[0.5px] bg-system-separator"></div>
+<!-- Version Row -->
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 rounded-[7px] bg-[#8E8E93] flex items-center justify-center text-white shrink-0">
+<span class="material-symbols-outlined text-[17px]">info</span>
+</div>
+<span class="text-[15px] font-normal text-text-primary">Version</span>
+</div>
+<span class="text-[15px] text-text-secondary">2.4</span>
+</div>
+</div>
+</div>
+<!-- Footnote -->
+<div class="text-center px-6 pt-1">
+<p class="text-[12px] leading-relaxed text-text-secondary">
+        Your browsing habits are encrypted and never recorded or shared.
+      </p>
+</div>
+</div>
+</main>
+<!-- Apple iOS Native Tab Bar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-[#F2F2F7]/85 backdrop-blur-xl border-t border-system-separator/60">
+<div class="max-w-[480px] mx-auto flex justify-around items-center h-[49px]">
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 text-text-secondary active:opacity-70 transition-opacity" data-path="protection" href="#">
+<span class="material-symbols-outlined text-[23px]">shield</span>
+<span class="text-[10px] font-medium leading-none">Protection</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 text-text-secondary active:opacity-70 transition-opacity" data-path="data-saver" href="#">
+<span class="material-symbols-outlined text-[23px]">bolt</span>
+<span class="text-[10px] font-medium leading-none">Data Saver</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 flex-1 text-text-secondary active:opacity-70 transition-opacity" data-path="locations" href="#">
+<span class="material-symbols-outlined text-[23px]">public</span>
+<span class="text-[10px] font-medium leading-none">Locations</span>
+</a>
+<a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 flex-1 text-system-blue" data-path="settings" href="#">
+<span class="material-symbols-outlined text-[23px]" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="text-[10px] font-medium leading-none">Settings</span>
+</a>
+</div>
+</nav>
+<script>
+  function toggleSwitch(btn) {
+    const isChecked = btn.getAttribute('aria-checked') === 'true';
+    const knob = btn.querySelector('span');
+
+    if (isChecked) {
+      btn.setAttribute('aria-checked', 'false');
+      btn.classList.remove('bg-system-green');
+      btn.classList.add('bg-system-gray-5');
+      knob.classList.remove('translate-x-[22px]');
+      knob.classList.add('translate-x-0');
+    } else {
+      btn.setAttribute('aria-checked', 'true');
+      btn.classList.remove('bg-system-gray-5');
+      btn.classList.add('bg-system-green');
+      knob.classList.remove('translate-x-0');
+      knob.classList.add('translate-x-[22px]');
+    }
+  }
+</script>
+</body></html>

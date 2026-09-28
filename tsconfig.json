@@ -11,9 +11,11 @@
       ]
     }
   },
+  // NOTE: `**/*.ts` would also sweep up modules/* and stray .ts files into the
+  // expo-router typed-routes generator. Keep the boundary tight: app code only.
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ]

@@ -1,0 +1,352 @@
+{
+  "communities": {
+    "0": [
+      "ref_expo",
+      "ref_expo_device",
+      "ref_expo_image",
+      "ref_expo_symbols",
+      "ref_react_native_safe_area_context",
+      "src_app_explore",
+      "src_app_explore_styles",
+      "src_app_explore_tabtwoscreen",
+      "src_app_index",
+      "src_app_index_getdevmenuhint",
+      "src_app_index_homescreen",
+      "src_app_index_styles",
+      "src_components_hint_row",
+      "src_components_hint_row_hintrow",
+      "src_components_hint_row_hintrowprops",
+      "src_components_hint_row_styles",
+      "src_components_themed_text",
+      "src_components_themed_text_styles",
+      "src_components_themed_text_themedtext",
+      "src_components_themed_text_themedtextprops",
+      "src_components_themed_view",
+      "src_components_themed_view_themedview",
+      "src_components_themed_view_themedviewprops",
+      "src_components_ui_collapsible",
+      "src_components_ui_collapsible_collapsible",
+      "src_components_ui_collapsible_styles",
+      "src_components_web_badge",
+      "src_components_web_badge_styles",
+      "src_components_web_badge_webbadge",
+      "src_constants_theme",
+      "src_constants_theme_bottomtabinset",
+      "src_constants_theme_colors",
+      "src_constants_theme_fonts",
+      "src_constants_theme_spacing",
+      "src_constants_theme_themecolor",
+      "src_global",
+      "src_hooks_use_color_scheme",
+      "src_hooks_use_color_scheme_usecolorscheme",
+      "src_hooks_use_theme",
+      "src_hooks_use_theme_usetheme"
+    ],
+    "1": [
+      "ref_expo_router",
+      "ref_expo_splash_screen",
+      "ref_react",
+      "ref_react_native",
+      "ref_react_native_reanimated",
+      "ref_react_native_worklets",
+      "src_app_layout",
+      "src_app_layout_tablayout",
+      "src_components_animated_icon",
+      "src_components_animated_icon_animatedicon",
+      "src_components_animated_icon_animatedsplashoverlay",
+      "src_components_animated_icon_glowkeyframe",
+      "src_components_animated_icon_keyframe",
+      "src_components_animated_icon_logokeyframe",
+      "src_components_animated_icon_module",
+      "src_components_animated_icon_styles",
+      "src_components_animated_icon_web",
+      "src_components_animated_icon_web_animatedicon",
+      "src_components_animated_icon_web_animatedsplashoverlay",
+      "src_components_animated_icon_web_glowkeyframe",
+      "src_components_animated_icon_web_keyframe",
+      "src_components_animated_icon_web_logokeyframe",
+      "src_components_animated_icon_web_styles",
+      "src_components_app_tabs",
+      "src_components_app_tabs_apptabs",
+      "src_hooks_use_color_scheme_web",
+      "src_hooks_use_color_scheme_web_usecolorscheme"
+    ],
+    "2": [
+      "package_dependencies",
+      "package_dependencies_expo",
+      "package_dependencies_expo_constants",
+      "package_dependencies_expo_dev_client",
+      "package_dependencies_expo_device",
+      "package_dependencies_expo_font",
+      "package_dependencies_expo_glass_effect",
+      "package_dependencies_expo_image",
+      "package_dependencies_expo_linking",
+      "package_dependencies_expo_router",
+      "package_dependencies_expo_splash_screen",
+      "package_dependencies_expo_status_bar",
+      "package_dependencies_expo_symbols",
+      "package_dependencies_expo_system_ui",
+      "package_dependencies_expo_ui",
+      "package_dependencies_expo_web_browser",
+      "package_dependencies_react",
+      "package_dependencies_react_dom",
+      "package_dependencies_react_native",
+      "package_dependencies_react_native_gesture_handler",
+      "package_dependencies_react_native_reanimated",
+      "package_dependencies_react_native_safe_area_context",
+      "package_dependencies_react_native_screens",
+      "package_dependencies_react_native_web",
+      "package_dependencies_react_native_worklets"
+    ],
+    "3": [
+      "app",
+      "app_eas_projectid",
+      "app_experiments_reactcompiler",
+      "app_experiments_typedroutes",
+      "app_expo",
+      "app_expo_experiments",
+      "app_expo_extra",
+      "app_expo_icon",
+      "app_expo_ios",
+      "app_expo_name",
+      "app_expo_orientation",
+      "app_expo_plugins",
+      "app_expo_scheme",
+      "app_expo_slug",
+      "app_expo_userinterfacestyle",
+      "app_expo_version",
+      "app_expo_web",
+      "app_extra_eas",
+      "app_extra_router",
+      "app_ios_icon",
+      "app_web_favicon",
+      "app_web_output"
+    ],
+    "4": [
+      "package",
+      "package_devdependencies",
+      "package_devdependencies_types_react",
+      "package_devdependencies_typescript",
+      "package_main",
+      "package_name",
+      "package_private",
+      "package_version",
+      "ref_expo_constants",
+      "ref_expo_dev_client",
+      "ref_expo_font",
+      "ref_expo_glass_effect",
+      "ref_expo_linking",
+      "ref_expo_status_bar",
+      "ref_expo_system_ui",
+      "ref_expo_ui",
+      "ref_react_dom",
+      "ref_react_native_gesture_handler",
+      "ref_react_native_screens",
+      "ref_react_native_web",
+      "ref_types_react",
+      "ref_typescript"
+    ],
+    "5": [
+      "ref_fs",
+      "ref_path",
+      "ref_readline",
+      "scripts_reset_project",
+      "scripts_reset_project_exampledirpath",
+      "scripts_reset_project_fs",
+      "scripts_reset_project_movedirectories",
+      "scripts_reset_project_olddirs",
+      "scripts_reset_project_path",
+      "scripts_reset_project_readline",
+      "scripts_reset_project_rl",
+      "scripts_reset_project_root"
+    ],
+    "6": [
+      "ref_expo_web_browser",
+      "src_components_app_tabs_web",
+      "src_components_app_tabs_web_apptabs",
+      "src_components_app_tabs_web_customtablist",
+      "src_components_app_tabs_web_styles",
+      "src_components_app_tabs_web_tabbutton",
+      "src_components_external_link",
+      "src_components_external_link_externallink",
+      "src_components_external_link_props",
+      "src_constants_theme_maxcontentwidth"
+    ],
+    "7": [
+      "app_adaptiveicon_backgroundcolor",
+      "app_adaptiveicon_backgroundimage",
+      "app_adaptiveicon_foregroundimage",
+      "app_adaptiveicon_monochromeimage",
+      "app_android_adaptiveicon",
+      "app_android_package",
+      "app_android_predictivebackgestureenabled",
+      "app_expo_android"
+    ],
+    "8": [
+      "ref_expo_tsconfig_base",
+      "tsconfig",
+      "tsconfig_compileroptions",
+      "tsconfig_compileroptions_paths",
+      "tsconfig_compileroptions_strict",
+      "tsconfig_extends",
+      "tsconfig_include",
+      "tsconfig_paths_assets"
+    ],
+    "9": [
+      "package_scripts",
+      "package_scripts_android",
+      "package_scripts_ios",
+      "package_scripts_lint",
+      "package_scripts_reset_project",
+      "package_scripts_start",
+      "package_scripts_web"
+    ]
+  },
+  "cohesion": {
+    "0": 0.12051282051282051,
+    "1": 0.09686609686609686,
+    "2": 0.08,
+    "3": 0.09090909090909091,
+    "4": 0.09090909090909091,
+    "5": 0.16666666666666666,
+    "6": 0.2222222222222222,
+    "7": 0.25,
+    "8": 0.25,
+    "9": 0.2857142857142857
+  },
+  "gods": [
+    {
+      "id": "ref_react_native",
+      "label": "react-native",
+      "degree": 16
+    },
+    {
+      "id": "app_expo",
+      "label": "expo",
+      "degree": 14
+    },
+    {
+      "id": "src_hooks_use_theme_usetheme",
+      "label": "useTheme()",
+      "degree": 9
+    },
+    {
+      "id": "src_components_themed_text_themedtext",
+      "label": "ThemedText()",
+      "degree": 8
+    },
+    {
+      "id": "src_components_themed_view_themedview",
+      "label": "ThemedView()",
+      "degree": 8
+    },
+    {
+      "id": "src_constants_theme_spacing",
+      "label": "Spacing",
+      "degree": 7
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 7
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "degree": 6
+    },
+    {
+      "id": "ref_expo_image",
+      "label": "expo-image",
+      "degree": 5
+    },
+    {
+      "id": "ref_expo_router",
+      "label": "expo-router",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "TabTwoScreen()",
+      "target": "useTheme()",
+      "source_files": [
+        "src/app/explore.tsx",
+        "src/hooks/use-theme.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "peripheral node `TabTwoScreen()` unexpectedly reaches hub `useTheme()`"
+    },
+    {
+      "source": "ThemedText()",
+      "target": "useTheme()",
+      "source_files": [
+        "src/components/themed-text.tsx",
+        "src/hooks/use-theme.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "ThemedView()",
+      "target": "useTheme()",
+      "source_files": [
+        "src/components/themed-view.tsx",
+        "src/hooks/use-theme.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "Collapsible()",
+      "target": "useTheme()",
+      "source_files": [
+        "src/components/ui/collapsible.tsx",
+        "src/hooks/use-theme.ts"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `dependencies` connect `Community 2` to `Community 4`?",
+      "why": "High betweenness centrality (0.175) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `react-native` connect `Community 1` to `Community 0`, `Community 4`, `Community 6`?",
+      "why": "High betweenness centrality (0.144) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `scripts` connect `Community 9` to `Community 4`?",
+      "why": "High betweenness centrality (0.047) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `HintRowProps`, `ThemedTextProps`, `ThemedViewProps` to the rest of the system?",
+      "why": "102 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.12051282051282051 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09686609686609686 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.08 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

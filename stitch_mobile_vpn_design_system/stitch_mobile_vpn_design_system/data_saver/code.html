@@ -1,0 +1,249 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "canvas-bg": "#F2F2F7",
+        "surface-card": "#FFFFFF",
+        "system-blue": "#007AFF",
+        "system-green": "#34C759",
+        "system-gray": "#8E8E93",
+        "system-gray-2": "#AEAEB2",
+        "system-gray-3": "#C7C7CC",
+        "system-gray-4": "#D1D1D6",
+        "system-gray-5": "#E5E5EA",
+        "system-gray-6": "#F2F2F7",
+        "label-primary": "#000000",
+        "label-secondary": "#6C6C70",
+        "label-tertiary": "#8E8E93",
+        "separator": "rgba(60, 60, 67, 0.12)",
+      },
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"SF Pro Text"', 'Inter', 'sans-serif'],
+      },
+      borderRadius: {
+        "ios-card": "16px",
+        "ios-inner": "10px",
+      }
+    }
+  }
+};</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,sans-serif;-webkit-font-smoothing:antialiased;}body{overscroll-behavior:none;background-color:#F2F2F7;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-canvas-bg text-label-primary flex flex-col min-h-screen selection:bg-system-blue/20"><!-- iOS Native Navigation Bar (Large Title style) --><header class="sticky top-0 w-full z-40 bg-[#F2F2F7]/85 backdrop-blur-xl border-b border-black/5 pt-safe"><div class="max-w-[480px] mx-auto px-4 h-12 flex items-center justify-between"><div class="flex items-center gap-2"><img alt="Friendly Green Leaf Shield Logo" class="h-6 w-auto object-contain rounded-md" src="https://lh3.googleusercontent.com/aida/AEtjO1X6Vh5NkSIFj733SAm3ZhPBE9W9kr5CTGPH0swX9Y0aNUnp15WIoYfQkWX0NSI4f6cfldgRyHQe3uJ-Nzf0s2triicNPPx1lb2vGtGKS7lH0ZbbqmMbAfunbLlxU-KTmMuPKuOCI186X61GdXq5gaWRuKClETfKWvZ6NptdBZ3hgpsO4BuaUtyMFu5OcdnTdC5QVVfuFyzwJuQfX3kFyOr1P3H7irNbvVMqvtcGZLEXleocII_zXecep_E"><span class="text-[17px] font-semibold text-black tracking-tight">Terra Guard</span></div><button class="w-8 h-8 rounded-full bg-system-gray-5 flex items-center justify-center text-label-secondary hover:opacity-80 active:scale-95 transition-transform"><span class="material-symbols-outlined text-[19px]">person</span></button></div></header><main class="flex-1 flex flex-col relative w-full pb-24 max-w-[480px] mx-auto min-h-screen px-4 pt-3"><div class="flex flex-col w-full gap-5">
+<!-- Reassuring Greeting Card -->
+<div class="w-full rounded-[18px] bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-full bg-system-green/10 flex items-center justify-center shrink-0 text-system-green">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[17px] font-semibold text-black tracking-tight leading-snug">Breathe easy</span>
+<span class="text-[13px] text-label-secondary leading-snug">Your connection is gentle, quiet, and frugal.</span>
+</div>
+</div>
+<!-- 1. Native iOS Overview Card -->
+<div class="w-full bg-white rounded-[18px] p-4 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-3.5">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="text-[13px] font-medium text-label-secondary tracking-tight">Total saved this month</span>
+<div class="flex items-baseline gap-1 mt-0.5">
+<span class="text-[34px] font-bold text-black tracking-tight leading-none">14.8</span>
+<span class="text-[20px] font-semibold text-label-secondary">GB</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-system-green/15 text-system-green font-medium text-[12px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+      Optimal
+    </span>
+</div>
+<!-- iOS Progress Bar -->
+<div class="flex flex-col gap-1.5 pt-1">
+<div class="flex justify-between items-center text-[13px]">
+<span class="text-label-secondary">Monthly plan</span>
+<span class="font-medium text-black">32 GB used of 50 GB</span>
+</div>
+<div class="w-full h-2 bg-system-gray-5 rounded-full overflow-hidden">
+<div class="h-full bg-system-blue rounded-full transition-all duration-500 ease-out" style="width: 64%;"></div>
+</div>
+</div>
+<!-- Friendly Callout Note -->
+<div class="flex items-center gap-2.5 bg-system-gray-6 rounded-[12px] px-3 py-2.5 mt-0.5">
+<span class="material-symbols-outlined text-system-blue text-[18px]">calendar_today</span>
+<p class="text-[13px] text-label-secondary">
+      You have plenty of data left for the next <strong class="text-black font-semibold">12 days</strong>.
+    </p>
+</div>
+</div>
+<!-- 2. iOS Segmented Control Section -->
+<div class="w-full flex flex-col gap-1.5">
+<div class="flex items-center justify-between px-1">
+<span class="text-[13px] font-semibold text-label-secondary uppercase tracking-wider">Saving strength</span>
+<span class="text-[12px] text-label-tertiary">Changes apply instantly</span>
+</div>
+<div class="bg-white rounded-[18px] p-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex flex-col gap-3">
+<!-- Authentic iOS Native Segmented Control -->
+<div class="grid grid-cols-3 bg-[#E5E5EA] p-[2px] rounded-[9px] text-center" id="mode-selector">
+<button class="mode-tab py-1.5 rounded-[7px] text-[13px] font-medium text-label-primary/80 transition-all select-none" data-mode="normal" type="button">
+        Normal
+      </button>
+<button class="mode-tab py-1.5 rounded-[7px] text-[13px] font-semibold bg-white text-black shadow-[0_1px_3px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.04)] transition-all select-none" data-mode="high" type="button">
+        High
+      </button>
+<button class="mode-tab py-1.5 rounded-[7px] text-[13px] font-medium text-label-primary/80 transition-all select-none" data-mode="super" type="button">
+        Super
+      </button>
+</div>
+<!-- Description -->
+<div class="flex items-center gap-2 px-1 text-label-secondary" id="mode-description">
+<span class="material-symbols-outlined text-[17px] text-system-blue shrink-0">check_circle</span>
+<span class="text-[13px] leading-tight">
+        Saves data on videos and social apps smoothly with zero lag.
+      </span>
+</div>
+</div>
+</div>
+<!-- 3. iOS Grouped Table View (Single Card with Inset Dividers) -->
+<div class="w-full flex flex-col gap-1.5">
+<div class="flex items-center justify-between px-1">
+<span class="text-[13px] font-semibold text-label-secondary uppercase tracking-wider">Apps saving data</span>
+<span class="text-[12px] text-label-tertiary">4 active</span>
+</div>
+<div class="bg-white rounded-[18px] shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
+<!-- YouTube Row -->
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-[8px] bg-[#FF0000]/10 flex items-center justify-center shrink-0 text-[#FF0000]">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[15px] font-medium text-black leading-tight truncate">YouTube</span>
+<span class="text-[12px] text-label-secondary leading-tight truncate mt-0.5">Saved 5.8 GB on videos</span>
+</div>
+</div>
+<!-- iOS Native Switch -->
+<button aria-checked="true" class="toggle-btn w-[51px] h-[31px] bg-system-green rounded-full p-[2px] transition-colors shrink-0 relative focus:outline-none" role="switch" type="button">
+<span class="block w-[27px] h-[27px] bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.15)] transform translate-x-5 transition-transform duration-200 ease-in-out"></span>
+</button>
+</div>
+<div class="border-t border-[#C6C6C8]/30 ml-15 pl-0 mx-4"></div>
+<!-- Instagram Row -->
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-[8px] bg-[#E1306C]/10 flex items-center justify-center shrink-0 text-[#E1306C]">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[15px] font-medium text-black leading-tight truncate">Instagram</span>
+<span class="text-[12px] text-label-secondary leading-tight truncate mt-0.5">Saved 3.4 GB on photos &amp; reels</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-btn w-[51px] h-[31px] bg-system-green rounded-full p-[2px] transition-colors shrink-0 relative focus:outline-none" role="switch" type="button">
+<span class="block w-[27px] h-[27px] bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.15)] transform translate-x-5 transition-transform duration-200 ease-in-out"></span>
+</button>
+</div>
+<div class="border-t border-[#C6C6C8]/30 ml-15 pl-0 mx-4"></div>
+<!-- TikTok Row -->
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-[8px] bg-black/5 flex items-center justify-center shrink-0 text-black">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">music_video</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[15px] font-medium text-black leading-tight truncate">TikTok</span>
+<span class="text-[12px] text-label-secondary leading-tight truncate mt-0.5">Saved 2.9 GB</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-btn w-[51px] h-[31px] bg-system-green rounded-full p-[2px] transition-colors shrink-0 relative focus:outline-none" role="switch" type="button">
+<span class="block w-[27px] h-[27px] bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.15)] transform translate-x-5 transition-transform duration-200 ease-in-out"></span>
+</button>
+</div>
+<div class="border-t border-[#C6C6C8]/30 ml-15 pl-0 mx-4"></div>
+<!-- Web Browsing Row -->
+<div class="flex items-center justify-between px-4 py-3">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-8 h-8 rounded-[8px] bg-system-blue/10 flex items-center justify-center shrink-0 text-system-blue">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">travel_explore</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-[15px] font-medium text-black leading-tight truncate">Web Browsing</span>
+<span class="text-[12px] text-label-secondary leading-tight truncate mt-0.5">Saved 1.2 GB</span>
+</div>
+</div>
+<button aria-checked="true" class="toggle-btn w-[51px] h-[31px] bg-system-green rounded-full p-[2px] transition-colors shrink-0 relative focus:outline-none" role="switch" type="button">
+<span class="block w-[27px] h-[27px] bg-white rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2),0_0_1px_rgba(0,0,0,0.15)] transform translate-x-5 transition-transform duration-200 ease-in-out"></span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const descriptions = {
+      normal: "Light touch. Keeps full clarity while trimming unnoticed data waste.",
+      high: "Saves data on videos and social apps smoothly with zero lag.",
+      super: "Maximum savings. Ideal when data is running short or roaming."
+    };
+
+    const tabs = document.querySelectorAll('.mode-tab');
+    const descText = document.querySelector('#mode-description span:last-child');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => {
+          t.classList.remove('bg-white', 'text-black', 'shadow-[0_1px_3px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.04)]', 'font-semibold');
+          t.classList.add('text-label-primary/80', 'font-medium');
+        });
+        tab.classList.add('bg-white', 'text-black', 'shadow-[0_1px_3px_rgba(0,0,0,0.12),0_1px_1px_rgba(0,0,0,0.04)]', 'font-semibold');
+        tab.classList.remove('text-label-primary/80', 'font-medium');
+
+        const mode = tab.getAttribute('data-mode');
+        if (descText && descriptions[mode]) {
+          descText.textContent = descriptions[mode];
+        }
+      });
+    });
+
+    const toggles = document.querySelectorAll('.toggle-btn');
+    toggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const isChecked = toggle.getAttribute('aria-checked') === 'true';
+        const knob = toggle.querySelector('span');
+        if (isChecked) {
+          toggle.setAttribute('aria-checked', 'false');
+          toggle.classList.remove('bg-system-green');
+          toggle.classList.add('bg-system-gray-5');
+          knob.classList.remove('translate-x-5');
+          knob.classList.add('translate-x-0.5');
+        } else {
+          toggle.setAttribute('aria-checked', 'true');
+          toggle.classList.add('bg-system-green');
+          toggle.classList.remove('bg-system-gray-5');
+          knob.classList.add('translate-x-5');
+          knob.classList.remove('translate-x-0.5');
+        }
+      });
+    });
+  })();
+</script>
+</main>
+<!-- Native iOS Tab Bar -->
+<nav class="fixed bottom-0 w-full z-50 pb-safe bg-white/85 backdrop-blur-xl border-t border-[#C6C6C8]/30" data-active-classes="text-system-blue">
+<div class="max-w-[480px] mx-auto flex justify-around items-center h-12 px-2">
+<a class="flex flex-col items-center justify-center gap-0.5 w-16 text-system-gray hover:text-black transition-colors" data-path="protection" href="#">
+<span class="material-symbols-outlined text-[24px]">shield</span>
+<span class="text-[10px] font-medium tracking-tight">Protection</span>
+</a>
+<a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 text-system-blue font-semibold" data-path="data-saver" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="text-[10px] tracking-tight">Data Saver</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 w-16 text-system-gray hover:text-black transition-colors" data-path="locations" href="#">
+<span class="material-symbols-outlined text-[24px]">public</span>
+<span class="text-[10px] font-medium tracking-tight">Locations</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-0.5 w-16 text-system-gray hover:text-black transition-colors" data-path="settings" href="#">
+<span class="material-symbols-outlined text-[24px]">settings</span>
+<span class="text-[10px] font-medium tracking-tight">Settings</span>
+</a>
+</div>
+</nav>
+
+
+</body></html>

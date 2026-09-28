@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"><meta content="mobile_tab" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-bright": "#faf9fe", "error": "#ba1a1a", "on-surface-variant": "#414755", "on-surface": "#1a1b1f", "surface-card": "#FFFFFF", "system-orange": "#FF9500", "canvas-background": "#F2F2F7", "system-blue": "#007AFF", "system-gray-6": "#F2F2F7", "system-green": "#34C759", "outline-variant": "#c1c6d7", "surface": "#F2F2F7", "text-primary": "#1C1C1E", "system-separator": "rgba(60, 60, 67, 0.12)", "primary": "#007AFF", "system-gray-5": "#E5E5EA", "surface-container-lowest": "#ffffff", "text-secondary": "#8E8E93" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.125rem", "full": "9999px" }, spacing: { "space-lg": "1.25rem", "space-md": "1rem", "space-sm": "0.5rem", "space-xl": "2rem", "gutter": "1rem", "margin": "1rem", "space-xs": "0.25rem" }, fontFamily: { "caption-sm": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "headline-lg": ["Inter"], "display-lg": ["Inter"], "label-md": ["Inter"], "body-lg": ["Inter"], "title-md": ["Inter"], "headline-sm": ["Inter"] }, fontSize: { "caption-sm": ["11px", { lineHeight: "13px", letterSpacing: "0.05px", fontWeight: "400" }], "body-md": ["15px", { lineHeight: "20px", letterSpacing: "-0.05px", fontWeight: "400" }], "headline-md": ["22px", { lineHeight: "28px", letterSpacing: "-0.2px", fontWeight: "600" }], "headline-lg": ["28px", { lineHeight: "34px", letterSpacing: "-0.3px", fontWeight: "700" }], "display-lg": ["34px", { lineHeight: "41px", letterSpacing: "-0.4px", fontWeight: "700" }], "label-md": ["13px", { lineHeight: "18px", letterSpacing: "0px", fontWeight: "500" }], "body-lg": ["17px", { lineHeight: "22px", letterSpacing: "-0.1px", fontWeight: "400" }], "title-md": ["17px", { lineHeight: "22px", letterSpacing: "-0.1px", fontWeight: "600" }], "headline-sm": ["20px", { lineHeight: "25px", letterSpacing: "-0.15px", fontWeight: "600" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style></head><body class="bg-[#F2F2F7] font-body-md text-[#1C1C1E] flex flex-col min-h-screen selection:bg-[#007AFF]/20"><header class="fixed top-0 w-full z-50 bg-[#F2F2F7]/85 backdrop-blur-xl border-b border-[rgba(60,60,67,0.12)] pt-safe"><div class="h-14 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Friendly Green Leaf Shield Logo" class="h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1X6Vh5NkSIFj733SAm3ZhPBE9W9kr5CTGPH0swX9Y0aNUnp15WIoYfQkWX0NSI4f6cfldgRyHQe3uJ-Nzf0s2triicNPPx1lb2vGtGKS7lH0ZbbqmMbAfunbLlxU-KTmMuPKuOCI186X61GdXq5gaWRuKClETfKWvZ6NptdBZ3hgpsO4BuaUtyMFu5OcdnTdC5QVVfuFyzwJuQfX3kFyOr1P3H7irNbvVMqvtcGZLEXleocII_zXecep_E"><div class="flex flex-col"><span class="font-semibold text-[17px] text-[#1C1C1E] tracking-tight leading-tight">Terra Guard</span><span class="font-normal text-[12px] text-[#8E8E93] leading-none">Locations</span></div></div><div class="flex items-center gap-space-sm"><div class="w-8 h-8 rounded-full bg-[#E5E5EA] flex items-center justify-center text-[#007AFF]"><span class="material-symbols-outlined text-[19px]">account_circle</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-14 pb-24 bg-[#F2F2F7] max-w-[480px] mx-auto min-h-screen"><div class="flex flex-col w-full px-margin pb-10">
+<!-- iOS Search Bar -->
+<div class="relative w-full mt-3 mb-4">
+<div class="flex items-center w-full h-10 px-3 bg-[rgba(142,142,147,0.12)] rounded-xl transition-all">
+<span class="material-symbols-outlined text-[#8E8E93] text-[20px] mr-2 select-none">search</span>
+<input class="w-full bg-transparent text-[16px] text-[#1C1C1E] placeholder:text-[#8E8E93] focus:outline-none" id="locationSearch" placeholder="Search city or country..." type="text">
+<button aria-label="Clear search" class="hidden text-[#8E8E93] hover:text-[#1C1C1E] p-1 rounded-full transition-colors" id="clearSearch" type="button">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+</button>
+</div>
+</div>
+<!-- Smart Recommendation Card: Apple iOS Native Card Style -->
+<div class="relative overflow-hidden w-full bg-white text-[#1C1C1E] rounded-[18px] p-5 mb-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[rgba(60,60,67,0.06)]">
+<div class="flex items-start justify-between mb-3">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="material-symbols-outlined text-[#34C759] text-[16px]" style="font-variation-settings: 'FILL' 1;">eco</span>
+<span class="text-[11px] uppercase tracking-wider text-[#8E8E93] font-semibold">Recommended for you</span>
+</div>
+<h2 class="text-[20px] font-bold text-[#1C1C1E] tracking-tight">Frankfurt, Germany</h2>
+</div>
+<div class="flex items-center gap-1.5 bg-[#34C759]/10 px-2.5 py-1 rounded-full">
+<span class="w-2 h-2 rounded-full bg-[#34C759] animate-pulse"></span>
+<span class="text-[12px] text-[#34C759] font-semibold">Fastest</span>
+</div>
+</div>
+<p class="text-[14px] text-[#8E8E93] mb-4 leading-relaxed">
+      Optimal for everyday quiet browsing, private streaming, and gentle battery consumption.
+    </p>
+<div class="flex items-center justify-between gap-space-md pt-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] select-none shadow-xs border border-[rgba(60,60,67,0.06)]">
+          🇩🇪
+        </div>
+<div class="flex flex-col">
+<span class="text-[14px] font-semibold text-[#1C1C1E]">Natural Guard</span>
+<span class="text-[12px] text-[#8E8E93]">Always instant</span>
+</div>
+</div>
+<button class="h-10 px-5 bg-[#007AFF] text-white rounded-full text-[14px] font-semibold shadow-sm hover:bg-[#0062cc] active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer" id="connectRecommended" type="button">
+<span class="">Connect</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Filter Pills / Segmented Control -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar -mx-margin px-margin">
+<button class="filter-chip active flex-shrink-0 px-4 py-1.5 rounded-full bg-[#007AFF] text-white font-medium text-[13px] shadow-sm transition-all" data-filter="all" type="button">
+      All Places
+    </button>
+<button class="filter-chip flex-shrink-0 px-4 py-1.5 rounded-full bg-[#E5E5EA] text-[#1C1C1E] hover:bg-[#d8d8de] font-medium text-[13px] transition-all" data-filter="fastest" type="button">
+      Fastest
+    </button>
+<button class="filter-chip flex-shrink-0 px-4 py-1.5 rounded-full bg-[#E5E5EA] text-[#1C1C1E] hover:bg-[#d8d8de] font-medium text-[13px] transition-all" data-filter="streaming" type="button">
+      For Streaming
+    </button>
+<button class="filter-chip flex-shrink-0 px-4 py-1.5 rounded-full bg-[#E5E5EA] text-[#1C1C1E] hover:bg-[#d8d8de] font-medium text-[13px] transition-all" data-filter="nearby" type="button">
+      Nearby
+    </button>
+</div>
+<!-- Section Header -->
+<div class="flex items-center justify-between mb-2.5 px-1">
+<h3 class="text-[13px] font-semibold uppercase tracking-wider text-[#8E8E93]">Popular Places</h3>
+<span class="text-[12px] text-[#8E8E93]" id="locationCount">5 sanctuaries</span>
+</div>
+<!-- Locations List: Native iOS Inset Grouped Table View -->
+<div class="bg-white rounded-[16px] shadow-[0_1px_4px_rgba(0,0,0,0.04)] border border-[rgba(60,60,67,0.08)] overflow-hidden divide-y divide-[rgba(60,60,67,0.12)]" id="locationsList">
+<!-- Row: Frankfurt -->
+<div class="location-row flex items-center justify-between px-4 py-3 bg-white hover:bg-[#F2F2F7]/60 active:bg-[#E5E5EA] cursor-pointer transition-colors" data-city="Frankfurt" data-country="Germany" data-tags="fastest nearby streaming">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] flex-shrink-0 select-none">
+          🇩🇪
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[16px] font-semibold text-[#1C1C1E] tracking-tight truncate leading-tight">Frankfurt</span>
+<span class="text-[13px] text-[#8E8E93] truncate leading-tight mt-0.5">Germany</span>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5 bg-[#34C759]/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#34C759]"></span>
+<span class="text-[11px] text-[#34C759] font-semibold">Fast</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C7C7CC]">chevron_right</span>
+</div>
+</div>
+<!-- Row: Zurich -->
+<div class="location-row flex items-center justify-between px-4 py-3 bg-white hover:bg-[#F2F2F7]/60 active:bg-[#E5E5EA] cursor-pointer transition-colors" data-city="Zurich" data-country="Switzerland" data-tags="fastest nearby">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] flex-shrink-0 select-none">
+          🇨🇭
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[16px] font-semibold text-[#1C1C1E] tracking-tight truncate leading-tight">Zurich</span>
+<span class="text-[13px] text-[#8E8E93] truncate leading-tight mt-0.5">Switzerland</span>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5 bg-[#34C759]/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#34C759]"></span>
+<span class="text-[11px] text-[#34C759] font-semibold">Fast</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C7C7CC]">chevron_right</span>
+</div>
+</div>
+<!-- Row: London -->
+<div class="location-row flex items-center justify-between px-4 py-3 bg-white hover:bg-[#F2F2F7]/60 active:bg-[#E5E5EA] cursor-pointer transition-colors" data-city="London" data-country="United Kingdom" data-tags="fastest streaming nearby">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] flex-shrink-0 select-none">
+          🇬🇧
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[16px] font-semibold text-[#1C1C1E] tracking-tight truncate leading-tight">London</span>
+<span class="text-[13px] text-[#8E8E93] truncate leading-tight mt-0.5">United Kingdom</span>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5 bg-[#34C759]/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#34C759]"></span>
+<span class="text-[11px] text-[#34C759] font-semibold">Fast</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C7C7CC]">chevron_right</span>
+</div>
+</div>
+<!-- Row: New York -->
+<div class="location-row flex items-center justify-between px-4 py-3 bg-white hover:bg-[#F2F2F7]/60 active:bg-[#E5E5EA] cursor-pointer transition-colors" data-city="New York" data-country="United States" data-tags="streaming">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] flex-shrink-0 select-none">
+          🇺🇸
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[16px] font-semibold text-[#1C1C1E] tracking-tight truncate leading-tight">New York</span>
+<span class="text-[13px] text-[#8E8E93] truncate leading-tight mt-0.5">United States</span>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5 bg-[#FF9500]/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#FF9500]"></span>
+<span class="text-[11px] text-[#FF9500] font-semibold">Good</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C7C7CC]">chevron_right</span>
+</div>
+</div>
+<!-- Row: Tokyo -->
+<div class="location-row flex items-center justify-between px-4 py-3 bg-white hover:bg-[#F2F2F7]/60 active:bg-[#E5E5EA] cursor-pointer transition-colors" data-city="Tokyo" data-country="Japan" data-tags="streaming">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-[#F2F2F7] flex items-center justify-center text-[19px] flex-shrink-0 select-none">
+          🇯🇵
+        </div>
+<div class="flex flex-col min-w-0">
+<span class="text-[16px] font-semibold text-[#1C1C1E] tracking-tight truncate leading-tight">Tokyo</span>
+<span class="text-[13px] text-[#8E8E93] truncate leading-tight mt-0.5">Japan</span>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<div class="flex items-center gap-1.5 bg-[#FF9500]/10 px-2 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#FF9500]"></span>
+<span class="text-[11px] text-[#FF9500] font-semibold">Good</span>
+</div>
+<span class="material-symbols-outlined text-[18px] text-[#C7C7CC]">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('locationSearch');
+    const clearBtn = document.getElementById('clearSearch');
+    const rows = document.querySelectorAll('.location-row');
+    const filterButtons = document.querySelectorAll('.filter-chip');
+    const countDisplay = document.getElementById('locationCount');
+    let currentFilter = 'all';
+
+    function updateVisibility() {
+      const query = (searchInput.value || '').trim().toLowerCase();
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const city = (row.getAttribute('data-city') || '').toLowerCase();
+        const country = (row.getAttribute('data-country') || '').toLowerCase();
+        const tags = (row.getAttribute('data-tags') || '').toLowerCase();
+
+        const matchesSearch = !query || city.includes(query) || country.includes(query);
+        const matchesFilter = currentFilter === 'all' || tags.includes(currentFilter);
+
+        if (matchesSearch && matchesFilter) {
+          row.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+
+      if (countDisplay) {
+        countDisplay.textContent = visibleCount + (visibleCount === 1 ? ' sanctuary' : ' sanctuaries');
+      }
+
+      if (clearBtn) {
+        if (query.length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', updateVisibility);
+    }
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        updateVisibility();
+        searchInput.focus();
+      });
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => {
+          b.classList.remove('bg-[#007AFF]', 'text-white', 'shadow-sm');
+          b.classList.add('bg-[#E5E5EA]', 'text-[#1C1C1E]');
+        });
+        btn.classList.add('bg-[#007AFF]', 'text-white', 'shadow-sm');
+        btn.classList.remove('bg-[#E5E5EA]', 'text-[#1C1C1E]');
+        currentFilter = btn.getAttribute('data-filter') || 'all';
+        updateVisibility();
+      });
+    });
+
+    // Row selection micro-interaction
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const cityName = row.getAttribute('data-city');
+        
+        // Gentle highlight feedback
+        rows.forEach(r => r.classList.remove('bg-[#007AFF]/10'));
+        row.classList.add('bg-[#007AFF]/10');
+        
+        // Update recommended button temporarily to show friendly action
+        const recBtn = document.getElementById('connectRecommended');
+        if (recBtn) {
+          const originalText = recBtn.innerHTML;
+          recBtn.innerHTML = `<span>Switched to ${cityName}</span>`;
+          setTimeout(() => {
+            recBtn.innerHTML = originalText;
+          }, 2000);
+        }
+      });
+    });
+
+    // Recommendation card connect button action
+    const recConnectBtn = document.getElementById('connectRecommended');
+    if (recConnectBtn) {
+      recConnectBtn.addEventListener('click', () => {
+        recConnectBtn.innerHTML = `<span>Connected</span><span class="material-symbols-outlined text-[16px]">check</span>`;
+        recConnectBtn.classList.remove('bg-[#007AFF]');
+        recConnectBtn.classList.add('bg-[#34C759]');
+        setTimeout(() => {
+          recConnectBtn.innerHTML = `<span>Connect</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>`;
+          recConnectBtn.classList.add('bg-[#007AFF]');
+          recConnectBtn.classList.remove('bg-[#34C759]');
+        }, 2500);
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-white/85 backdrop-blur-xl border-t border-[rgba(60,60,67,0.12)]"><div class="max-w-[480px] mx-auto flex justify-around items-center h-16 px-space-xs"><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-[#8E8E93] hover:text-[#1C1C1E] transition-colors" data-path="protection" href="#"><span class="material-symbols-outlined text-[24px]">shield</span><span class="text-[10px] font-medium tracking-tight">Protection</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-[#8E8E93] hover:text-[#1C1C1E] transition-colors" data-path="data-saver" href="#"><span class="material-symbols-outlined text-[24px]">bolt</span><span class="text-[10px] font-medium tracking-tight">Data Saver</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg transition-colors text-[#007AFF] font-medium" data-path="locations" href="#"><span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">public</span><span class="text-[10px] font-semibold tracking-tight">Locations</span></a><a class="flex flex-col items-center justify-center gap-0.5 w-16 h-12 rounded-lg text-[#8E8E93] hover:text-[#1C1C1E] transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[24px]">settings</span><span class="text-[10px] font-medium tracking-tight">Settings</span></a></div></nav>
+
+
+</body></html>

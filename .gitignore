@@ -33,6 +33,11 @@ yarn-error.*
 # local env files
 .env*.local
 
+# Firebase config (Stage 8 / A16): gitignored on purpose — supplied per-machine at the repo root,
+# or in cloud builds via the EAS file secret GOOGLE_SERVICES_JSON. Never commit a real one.
+google-services.json
+GoogleService-Info.plist
+
 # typescript
 *.tsbuildinfo
 

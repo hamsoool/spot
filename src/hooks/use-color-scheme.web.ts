@@ -6,12 +6,14 @@ import { useColorScheme as useRNColorScheme } from 'react-native';
  */
 export function useColorScheme() {
   const [hasHydrated, setHasHydrated] = useState(false);
+  const colorScheme = useRNColorScheme();
 
   useEffect(() => {
-    setHasHydrated(true);
+    // Defer to the next frame so the effect never triggers a synchronous
+    // cascading render during hydration.
+    const frame = requestAnimationFrame(() => setHasHydrated(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
-
-  const colorScheme = useRNColorScheme();
 
   if (hasHydrated) {
     return colorScheme;

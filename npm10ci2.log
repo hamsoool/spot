@@ -1,0 +1,44 @@
+add lightningcss-win32-arm64-msvc 1.33.0
+add lightningcss-linux-x64-musl 1.33.0
+add lightningcss-linux-x64-gnu 1.33.0
+add lightningcss-linux-arm64-musl 1.33.0
+add lightningcss-linux-arm64-gnu 1.33.0
+add lightningcss-linux-arm-gnueabihf 1.33.0
+add lightningcss-freebsd-x64 1.33.0
+add lightningcss-darwin-x64 1.33.0
+add lightningcss-darwin-arm64 1.33.0
+add lightningcss-android-arm64 1.33.0
+add @unrs/resolver-binding-win32-ia32-msvc 1.12.2
+add @unrs/resolver-binding-win32-arm64-msvc 1.12.2
+add @unrs/resolver-binding-wasm32-wasi 1.12.2
+add @emnapi/wasi-threads 1.2.1
+add @emnapi/runtime 1.10.0
+add @emnapi/core 1.10.0
+add @unrs/resolver-binding-openharmony-arm64 1.12.2
+add @unrs/resolver-binding-linux-x64-musl 1.12.2
+add @unrs/resolver-binding-linux-x64-gnu 1.12.2
+add @unrs/resolver-binding-linux-s390x-gnu 1.12.2
+add @unrs/resolver-binding-linux-riscv64-musl 1.12.2
+add @unrs/resolver-binding-linux-riscv64-gnu 1.12.2
+add @unrs/resolver-binding-linux-ppc64-gnu 1.12.2
+add @unrs/resolver-binding-linux-loong64-musl 1.12.2
+add @unrs/resolver-binding-linux-loong64-gnu 1.12.2
+add @unrs/resolver-binding-linux-arm64-musl 1.12.2
+add @unrs/resolver-binding-linux-arm64-gnu 1.12.2
+add @unrs/resolver-binding-linux-arm-musleabihf 1.12.2
+add @unrs/resolver-binding-linux-arm-gnueabihf 1.12.2
+add @unrs/resolver-binding-freebsd-x64 1.12.2
+add @unrs/resolver-binding-darwin-x64 1.12.2
+add @unrs/resolver-binding-darwin-arm64 1.12.2
+add @unrs/resolver-binding-android-arm64 1.12.2
+add @unrs/resolver-binding-android-arm-eabi 1.12.2
+add @tybys/wasm-util 0.10.4
+add @napi-rs/wasm-runtime 1.2.4
+add @emnapi/runtime 1.11.3
+add @emnapi/core 1.11.3
+
+added 38 packages in 3s
+
+176 packages are looking for funding
+  run `npm fund` for details
+NPM10LINUX_EXIT=0  
