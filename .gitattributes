@@ -1,0 +1,3 @@
+# The provisioning scripts in server/ run on an Ubuntu VM. A CR from a Windows checkout makes
+# bash fail with "$'\r': command not found", so they must stay LF regardless of core.autocrlf.
+*.sh text eol=lf
