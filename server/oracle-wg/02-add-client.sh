@@ -182,9 +182,13 @@ The three values a client needs, spelled out:
   endpoint           : $PUBLIC_IP:$LISTEN_PORT
 
 To test from the phone right now, before any provisioning API exists:
-  1. copy everything between [Interface] and the end,
-  2. in the app open the developer screen, tap "Paste config", "Save config", "Start now".
-     That path bypasses provisioning and drives the real VpnFirewallService tunnel.
+  1. copy everything from [Interface] to the end,
+  2. in the app open the developer screen, paste it into the "Stage 9 - tunnel config" field,
+     and tap "7 · Save tunnel config"  ("8 · Clear" removes it again; the line above the field
+     shows the current source),
+  3. open Settings and flip the VPN tunnel switch — that is what actually connects. There is no
+     start button on the developer screen.
+     This path bypasses provisioning and drives the real VpnFirewallService tunnel.
 
 To watch it work from this VM:
   watch -n1 'wg show'                 # "latest handshake" a few seconds after connect

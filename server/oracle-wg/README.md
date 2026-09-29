@@ -38,30 +38,44 @@ to claim Singapore (its default).
 
 ## Point the app at it
 
-Nothing user-facing. One build-time value in `app.config.js`:
+Nothing user-facing, and nothing needed for the paste path above. Two build-time options:
+
+- **No code change:** set `EXPO_PUBLIC_VPN_PROVISIONING_URL` (`eas env:set`, or in the shell before
+  `expo prebuild`). Metro/EAS inline it at the call site in `vpn-provisioning.ts`.
+- **In config:** add it to `extra` — but note `app.config.js` returns `extra` in **two** branches
+  (`firebaseConfigured: true` and `false`), so put it in the shared `base.extra`, or it will be
+  missing from whichever branch you forgot.
 
 ```js
-extra: { vpnProvisioningUrl: 'https://vpn.example.com' }   // or EXPO_PUBLIC_VPN_PROVISIONING_URL
+extra: { ...base.extra, vpnProvisioningUrl: 'https://vpn.example.com' }
 ```
 
-Until a provisioning API exists, use the developer screen (in-app developer screen →
-"Paste config" → "Save config" → "Start now") with the block `02-add-client.sh` printed. That
-drives the real `VpnFirewallService` tunnel path, so it validates everything except provisioning.
+Both are read by `provisioningBaseUrl()`; the env var wins. Until one is set the app reports
+`provisioningStatus() === 'none'` and the VPN switch stays disabled with an explanation, which is
+the correct behaviour for a build with no server — not a bug to chase.
+
+Until a provisioning API exists, use the developer screen: paste the block
+`02-add-client.sh` printed into the "Stage 9 · tunnel config" field, tap **7 · Save tunnel
+config**, then flip the VPN tunnel switch in **Settings** — the switch is what connects, the dev
+screen has no start button. That drives the real `VpnFirewallService` tunnel path, so it validates
+everything except provisioning. **8 · Clear** removes the stored config again.
 
 ## Confirming traffic actually egresses the VM
 
 ```bash
 watch -n1 'wg show'            # "latest handshake" within ~10s of connect, then "transfer:" climbing
-sudo tcpdump -ni ens3 not port 51820 and not arp
+# NIC comes from the setup run — do not assume ens3 here either:
+NIC=$(awk -F'"' '/^PRIMARY_NIC/{print $2}' /etc/wireguard/spot/server.env)
+sudo tcpdump -ni "$NIC" not port 51820 and not arp
 ```
 
 and on the phone, any "what is my IP" check must return the VM's public IP.
 
 | Symptom | First thing to check |
 | --- | --- |
-| Phone: `Never` handshake, no transfer | Security List UDP/51820 (not `wg0.conf`) |
+| `wg show` on the server never lists a handshake | Security List UDP/51820 (not `wg0.conf`) |
 | Handshake OK, no egress | `iptables -t nat -S POSTROUTING \| grep MASQUERADE`, then `net.ipv4.ip_forward` |
 | Tunnel up, DNS fails | client `DNS =` line; AllowedIPs is IPv4-only on purpose, so v6 DNS must not be listed |
-| Works, then breaks after a reboot | `systemctl is-enabled wg-quick@wg0`; a stale `ens3` in PostUp after an interface rename — rerun with `--force` |
+| Works, then breaks after a reboot | `systemctl is-enabled wg-quick@wg0`; a stale NIC name in PostUp after an interface rename — rerun with `--force` |
 
 Never commit the output of `02-add-client.sh`: it contains a WireGuard private key.
