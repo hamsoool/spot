@@ -25,18 +25,8 @@ export default function AppTabs() {
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="locations">
-        <NativeTabs.Trigger.Label>Locations</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon
-          sf={{ default: 'globe', selected: 'globe.americas.fill' }}
-          md={{ default: 'public', selected: 'public' }}
-          src={require('@/assets/images/tabIcons/locations.png')}
-          renderingMode="template"
-        />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="data-saver">
-        <NativeTabs.Trigger.Label>Data Saver</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="data">
+        <NativeTabs.Trigger.Label>Data</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
           sf={{ default: 'bolt', selected: 'bolt.fill' }}
           md={{ default: 'bolt', selected: 'bolt' }}

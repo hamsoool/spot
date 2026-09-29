@@ -22,11 +22,8 @@ export default function AppTabs() {
           <TabTrigger name="index" href="/" asChild>
             <TabButton icon="shield" label="Protection" />
           </TabTrigger>
-          <TabTrigger name="locations" href="/locations" asChild>
-            <TabButton icon="globe" label="Locations" />
-          </TabTrigger>
-          <TabTrigger name="data-saver" href="/data-saver" asChild>
-            <TabButton icon="bolt" label="Data Saver" />
+          <TabTrigger name="data" href="/data" asChild>
+            <TabButton icon="bolt" label="Data" />
           </TabTrigger>
           <TabTrigger name="settings" href="/settings" asChild>
             <TabButton icon="settings" label="Settings" />

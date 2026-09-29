@@ -1,17 +1,52 @@
-import React from 'react';
+import React, { useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   Pressable,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import { useAppleTheme } from '@/hooks/use-theme';
-import { useVpn } from '@/context/vpn-context';
-import { AppleIcon } from '@/components/ui/apple-icon';
-import { BottomTabInset, MaxContentWidth, Spacing, Radius } from '@/constants/theme';
+  Platform,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import * as Haptics from "expo-haptics";
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
+import { useAppleTheme } from "@/hooks/use-theme";
+import { useVpn } from "@/context/vpn-context";
+import { AsciiEarth } from "@/components/ascii-earth";
+import { AppleIcon } from "@/components/ui/apple-icon";
+import {
+  BottomTabInset,
+  MaxContentWidth,
+  Radius,
+  Spacing,
+} from "@/constants/theme";
+
+/** Matches the speed tones used on the Locations screen. */
+function getLatencyTone(
+  latencyMs: number,
+  theme: ReturnType<typeof useAppleTheme>
+) {
+  if (latencyMs <= 50) {
+    return { bg: theme.badgeBg, fg: theme.badgeText };
+  }
+  if (latencyMs <= 150) {
+    return { bg: "rgba(255, 149, 0, 0.12)", fg: theme.palette.orange };
+  }
+  return {
+    bg: theme.isDark
+      ? "rgba(142, 142, 147, 0.18)"
+      : "rgba(142, 142, 147, 0.12)",
+    fg: theme.textSecondary,
+  };
+}
 
 export default function ProtectionScreen() {
   const insets = useSafeAreaInsets();
@@ -19,10 +54,111 @@ export default function ProtectionScreen() {
   const router = useRouter();
   const { isConnected, toggleConnection, selectedLocation } = useVpn();
 
-  const bottomPadding = insets.bottom + BottomTabInset + Spacing.xl;
+  const activeColor = theme.palette.green;
+  const inactiveColor = theme.textSecondary;
+  const currentColor = isConnected ? activeColor : inactiveColor;
+
+  // Ambient color driving the glow, ping ring, and status dot.
+  const glowRgb = isConnected
+    ? theme.isDark
+      ? "50, 215, 75"
+      : "52, 199, 89"
+    : "142, 142, 147";
+
+  const hour = new Date().getHours();
+  const greetingText =
+    hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+  // --- Reanimated state -----------------------------------------------------
+  const glowOpacity = useSharedValue(isConnected ? 0.9 : 0.55);
+  const stateAlpha = useSharedValue(isConnected ? 1 : 0);
+  const ringProgress = useSharedValue(0);
+  const dotPulse = useSharedValue(0);
+
+  useEffect(() => {
+    if (isConnected) {
+      stateAlpha.value = withTiming(1, { duration: 500 });
+      glowOpacity.value = withRepeat(
+        withTiming(1, {
+          duration: 2400,
+          easing: Easing.inOut(Easing.ease),
+        }),
+        -1,
+        true
+      );
+      ringProgress.value = withRepeat(
+        withTiming(1, { duration: 3500, easing: Easing.out(Easing.ease) }),
+        -1,
+        false
+      );
+      dotPulse.value = withRepeat(
+        withTiming(1, {
+          duration: 1300,
+          easing: Easing.inOut(Easing.ease),
+        }),
+        -1,
+        true
+      );
+    } else {
+      cancelAnimation(glowOpacity);
+      cancelAnimation(ringProgress);
+      cancelAnimation(dotPulse);
+      glowOpacity.value = withTiming(0.55, { duration: 400 });
+      stateAlpha.value = withTiming(0, { duration: 400 });
+      ringProgress.value = withTiming(0, { duration: 300 });
+      dotPulse.value = withTiming(0, { duration: 300 });
+    }
+  }, [isConnected, glowOpacity, stateAlpha, ringProgress, dotPulse]);
+
+  const glowStyle = useAnimatedStyle(() => ({
+    opacity: glowOpacity.value,
+  }));
+
+  const ringStyle = useAnimatedStyle(() => ({
+    opacity: stateAlpha.value * 0.55 * (1 - ringProgress.value),
+    transform: [{ scale: 1 + ringProgress.value * 0.1 }],
+  }));
+
+  const dotStyle = useAnimatedStyle(() => ({
+    opacity: 1 - dotPulse.value * 0.55,
+    transform: [{ scale: 1 + dotPulse.value * 0.5 }],
+  }));
+
+  // --- Interactions ---------------------------------------------------------
+  const handleToggle = () => {
+    const willConnect = !isConnected;
+    toggleConnection();
+    if (Platform.OS !== "web") {
+      if (willConnect) {
+        Haptics.notificationAsync(
+          Haptics.NotificationFeedbackType.Success
+        ).catch(() => {});
+      } else {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(
+          () => {}
+        );
+      }
+    }
+  };
+
+  const handleOpenLocations = () => {
+    if (Platform.OS !== "web") {
+      Haptics.selectionAsync().catch(() => {});
+    }
+    router.push("/data");
+  };
+
+  const latencyTone = getLatencyTone(selectedLocation.latencyMs, theme);
 
   return (
-    <View style={[styles.root, { backgroundColor: theme.background }]}>
+    <View
+      style={[
+        styles.root,
+        {
+          backgroundColor: theme.background,
+          paddingBottom: insets.bottom + BottomTabInset,
+        },
+      ]}>
       {/* iOS Navigation Header */}
       <View
         style={[
@@ -40,570 +176,384 @@ export default function ProtectionScreen() {
                 styles.headerIconCircle,
                 { backgroundColor: theme.blueBadgeBg },
               ]}>
-              <AppleIcon name="shield-check" size={18} color={theme.palette.blue} />
+              <AppleIcon
+                name="shield-check"
+                size={18}
+                color={theme.blueBadgeText}
+              />
             </View>
             <View>
               <Text style={[styles.headerTitle, { color: theme.text }]}>
                 Terra Guard
               </Text>
-              <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
+              <Text
+                style={[
+                  styles.headerSubtitle,
+                  { color: theme.textSecondary },
+                ]}>
                 Active Protection
               </Text>
             </View>
           </View>
           <View
-            style={[
-              styles.avatarButton,
-              { backgroundColor: theme.gray5 },
-            ]}>
+            style={[styles.avatarButton, { backgroundColor: theme.gray5 }]}>
             <AppleIcon name="person" size={17} color={theme.textSecondary} />
           </View>
         </View>
       </View>
 
-      {/* Main Scroll Content */}
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={[
-          styles.scrollContent,
-          {
-            paddingBottom: bottomPadding,
-          },
-        ]}
-        showsVerticalScrollIndicator={false}>
-        <View style={styles.contentWrapper}>
-          {/* Greeting Section */}
-          <View style={styles.greetingSection}>
-            <Text style={[styles.greetingTitle, { color: theme.text }]}>
-              Good afternoon, Sarah
-            </Text>
-            <Text style={[styles.greetingSubtitle, { color: theme.textSecondary }]}>
-              {isConnected
-                ? 'Your phone is safe, quiet, and saving data.'
-                : 'Protection is paused. Tap below to resume.'}
-            </Text>
-          </View>
+      <Pressable
+        onPress={handleToggle}
+        accessibilityRole="button"
+        accessibilityLabel={
+          isConnected ? "Turn off protection" : "Turn on protection"
+        }
+        accessibilityHint="Double tap to toggle VPN protection"
+        accessibilityState={{ checked: isConnected }}
+        style={({ pressed }) => [
+          styles.pressArea,
+          pressed && { transform: [{ scale: 0.985 }] },
+        ]}>
+        {/* Greeting */}
+        <View style={styles.greeting}>
+          <Text style={[styles.greetingTitle, { color: theme.text }]}>
+            {greetingText}
+          </Text>
+          <Text
+            style={[styles.greetingSubtitle, { color: theme.textSecondary }]}>
+            {isConnected
+              ? "Your phone is safe, quiet, and saving data."
+              : "Protection is paused. Tap anywhere to resume."}
+          </Text>
+        </View>
 
-          {/* Central Shield Toggle Hero */}
-          <View style={styles.heroSection}>
-            <View
+        <View style={styles.centerGroup}>
+          {/* ASCII Earth Hero with ambient glow + ping ring */}
+          <Animated.View style={styles.hero}>
+            <View style={styles.effectsLayer} pointerEvents="none">
+              <Animated.View style={[styles.fillCenter, glowStyle]}>
+                <View style={[styles.glowCircleXl, { overflow: "hidden" }]}>
+                  <LinearGradient
+                    colors={[
+                      `rgba(${glowRgb}, 0)`,
+                      `rgba(${glowRgb}, 0.16)`,
+                      `rgba(${glowRgb}, 0)`,
+                    ]}
+                    locations={[0, 0.5, 1]}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                  />
+                  <View
+                    style={[
+                      styles.glowCircleInner,
+                      { backgroundColor: `rgba(${glowRgb}, 0.10)` },
+                    ]}
+                  />
+                </View>
+              </Animated.View>
+
+              <Animated.View style={[styles.fillCenter, ringStyle]}>
+                <View
+                  style={[
+                    styles.pingRing,
+                    { borderColor: `rgba(${glowRgb}, 0.45)` },
+                  ]}
+                />
+              </Animated.View>
+            </View>
+
+            <Text style={[styles.statusLabel, { color: currentColor }]}>
+              {isConnected ? "Connected" : "Disconnected"}
+            </Text>
+
+            <View style={styles.earthContainer}>
+              <AsciiEarth
+                color={currentColor}
+                isRotating={isConnected}
+                fontSize={12.5}
+              />
+            </View>
+
+            <Text style={[styles.stateText, { color: currentColor }]}>
+              {isConnected ? "ON" : "OFF"}
+            </Text>
+          </Animated.View>
+
+          {/* Location row — design-system pill: card surface, pulsing dot,
+              latency badge, and a blue Change action. */}
+          <Pressable
+            onPress={handleOpenLocations}
+            accessibilityRole="button"
+            accessibilityLabel={`Connected location: ${selectedLocation.city}, ${selectedLocation.country}. Change location`}
+            style={({ pressed }) => [
+              styles.locationPill,
+              {
+                backgroundColor: theme.card,
+                borderColor: theme.border,
+                opacity: pressed ? 0.85 : 1,
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              },
+            ]}>
+            <Animated.View
               style={[
-                styles.glowRing,
-                {
-                  borderColor: isConnected
-                    ? 'rgba(52, 199, 89, 0.22)'
-                    : 'rgba(142, 142, 147, 0.16)',
-                  backgroundColor: isConnected
-                    ? 'rgba(52, 199, 89, 0.08)'
-                    : 'rgba(142, 142, 147, 0.05)',
-                },
-              ]}
-            />
-
-            <Pressable
-              onPress={toggleConnection}
-              accessibilityRole="button"
-              accessibilityLabel={isConnected ? 'Pause VPN Protection' : 'Connect VPN Protection'}
-              style={({ pressed }) => [
-                styles.shieldButton,
+                styles.statusDot,
+                dotStyle,
                 {
                   backgroundColor: isConnected
                     ? theme.palette.green
-                    : theme.isDark
-                    ? '#3A3A3C'
-                    : '#8E8E93',
-                  shadowColor: isConnected ? theme.palette.green : '#000000',
-                  opacity: pressed ? 0.9 : 1,
-                  transform: [{ scale: pressed ? 0.96 : 1 }],
+                    : theme.textTertiary,
+                  shadowColor: isConnected
+                    ? theme.palette.green
+                    : "transparent",
                 },
-              ]}>
-              <View style={styles.shieldIconPill}>
-                <AppleIcon
-                  name={isConnected ? 'shield-check' : 'shield'}
-                  size={38}
-                  color="#FFFFFF"
-                />
-              </View>
-              <Text style={styles.shieldStatusText}>
-                {isConnected ? 'Connected' : 'Paused'}
-              </Text>
-              <Text style={styles.shieldSubText}>
-                {isConnected ? 'Protected • Tap to pause' : 'Tap to resume'}
-              </Text>
-            </Pressable>
-          </View>
-
-
-
-          {/* Quick Location Switch Pill */}
-          <View style={styles.locationPillContainer}>
-            <Pressable
-              onPress={() => router.push('/locations')}
-              accessibilityRole="button"
-              accessibilityLabel="Change location"
-              style={({ pressed }) => [
-                styles.locationPill,
-                {
-                  backgroundColor: theme.card,
-                  borderColor: theme.border,
-                  opacity: pressed ? 0.75 : 1,
-                },
-              ]}>
-              <View
-                style={[
-                  styles.statusDot,
-                  {
-                    backgroundColor: isConnected
-                      ? theme.palette.green
-                      : theme.textTertiary,
-                  },
-                ]}
-              />
-              <Text style={styles.flagEmoji}>{selectedLocation.flag}</Text>
-              <Text style={[styles.locationPillText, { color: theme.text }]}>
-                {selectedLocation.city} •{' '}
-                {isConnected ? 'Safe connection' : 'Disconnected'}
-              </Text>
-              <View style={styles.latencyBadge}>
-                <Text style={[styles.latencyText, { color: theme.palette.green }]}>
-                  {selectedLocation.latencyMs} ms
-                </Text>
-              </View>
-              <Text style={[styles.changeText, { color: theme.palette.blue }]}>
-                Change
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Feature Cards Grid */}
-          <View style={styles.cardsContainer}>
-            {/* Card 1: Data Saved Today */}
-            <Pressable
-              onPress={() => router.push('/data-saver')}
-              style={({ pressed }) => [
-                styles.card,
-                {
-                  backgroundColor: theme.card,
-                  borderColor: theme.border,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}>
-              <View style={styles.cardHeaderRow}>
-                <View
-                  style={[
-                    styles.cardIconBox,
-                    { backgroundColor: theme.blueBadgeBg },
-                  ]}>
-                  <AppleIcon name="leaf" size={20} color={theme.palette.blue} />
-                </View>
-                <View style={styles.cardHeaderFlex}>
-                  <View style={styles.cardBadgeRow}>
-                    <Text style={[styles.cardLabel, { color: theme.textSecondary }]}>
-                      Data Saved Today
-                    </Text>
-                    <View
-                      style={[
-                        styles.microBadge,
-                        { backgroundColor: theme.blueBadgeBg },
-                      ]}>
-                      <Text
-                        style={[styles.microBadgeText, { color: theme.palette.blue }]}>
-                        +35% vs yesterday
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={[styles.cardValue, { color: theme.text }]}>1.4 GB</Text>
-                  <Text
-                    style={[styles.cardDescription, { color: theme.textSecondary }]}>
-                    About 45 minutes of smooth video saved on your mobile plan.
-                  </Text>
-                  <View
-                    style={[styles.progressBarTrack, { backgroundColor: theme.gray5 }]}>
-                    <View
-                      style={[
-                        styles.progressBarFill,
-                        { backgroundColor: theme.palette.blue, width: '68%' },
-                      ]}
-                    />
-                  </View>
-                </View>
-              </View>
-            </Pressable>
-
-
-            {/* Card 2: Protection Status */}
+              ]}
+            />
+            <Text style={styles.flagText}>{selectedLocation.flag}</Text>
+            <Text
+              style={[styles.locationCity, { color: theme.text }]}
+              numberOfLines={1}>
+              {selectedLocation.city}
+            </Text>
+            <Text
+              style={[styles.locationSeparator, { color: theme.textTertiary }]}>
+              •
+            </Text>
+            <Text
+              style={[styles.locationCountry, { color: theme.textSecondary }]}
+              numberOfLines={1}>
+              {selectedLocation.country}
+            </Text>
             <View
               style={[
-                styles.card,
-                { backgroundColor: theme.card, borderColor: theme.border },
+                styles.latencyBadge,
+                { backgroundColor: latencyTone.bg },
               ]}>
-              <View style={styles.cardHeaderRow}>
-                <View
-                  style={[styles.cardIconBox, { backgroundColor: theme.badgeBg }]}>
-                  <AppleIcon
-                    name="shield-check"
-                    size={20}
-                    color={theme.palette.green}
-                  />
-                </View>
-                <View style={styles.cardHeaderFlex}>
-                  <View style={styles.cardBadgeRow}>
-                    <Text style={[styles.cardLabel, { color: theme.textSecondary }]}>
-                      Protection Status
-                    </Text>
-                    <View
-                      style={[styles.microBadge, { backgroundColor: theme.badgeBg }]}>
-                      <Text
-                        style={[
-                          styles.microBadgeText,
-                          { color: theme.palette.green },
-                        ]}>
-                        All clear
-                      </Text>
-                    </View>
-                  </View>
-                  <Text style={[styles.cardValue, { color: theme.text }]}>
-                    12 trackers stopped
-                  </Text>
-                  <Text
-                    style={[styles.cardDescription, { color: theme.textSecondary }]}>
-                    Websites couldn&apos;t follow you around or show pushy pop-up ads
-                    today.
-                  </Text>
-                </View>
-              </View>
+              <AppleIcon
+                name="bolt"
+                size={11}
+                color={latencyTone.fg}
+                style={styles.boltIcon}
+              />
+              <Text style={[styles.latencyText, { color: latencyTone.fg }]}>
+                {selectedLocation.latencyMs}ms
+              </Text>
             </View>
-
-            {/* Card 3: Network Security */}
-            <Pressable
-              onPress={() => router.push('/settings')}
-              style={({ pressed }) => [
-                styles.card,
-                {
-                  backgroundColor: theme.card,
-                  borderColor: theme.border,
-                  opacity: pressed ? 0.85 : 1,
-                },
-              ]}>
-              <View style={styles.networkRow}>
-                <View style={styles.networkLeft}>
-                  <View
-                    style={[styles.cardIconBox, { backgroundColor: theme.gray5 }]}>
-                    <AppleIcon name="wifi-lock" size={19} color={theme.text} />
-                  </View>
-                  <View style={styles.networkTextGroup}>
-                    <Text
-                      numberOfLines={1}
-                      style={[styles.networkTitle, { color: theme.text }]}>
-                      Home Coffee Shop Wi-Fi
-                    </Text>
-                    <Text
-                      numberOfLines={1}
-                      style={[
-                        styles.networkSubtitle,
-                        { color: theme.textSecondary },
-                      ]}>
-                      Auto-protected automatically
-                    </Text>
-                  </View>
-                </View>
-                <View
-                  style={[
-                    styles.verifiedBadge,
-                    { backgroundColor: theme.blueBadgeBg },
-                  ]}>
-                  <AppleIcon
-                    name="checkmark"
-                    size={11}
-                    color={theme.palette.blue}
-                  />
-                  <Text
-                    style={[styles.verifiedText, { color: theme.palette.blue }]}>
-                    Verified
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
-          </View>
+            <Text style={[styles.changeText, { color: theme.tint }]}>
+              Change
+            </Text>
+          </Pressable>
         </View>
-      </ScrollView>
+
+        <Text style={[styles.hint, { color: theme.textTertiary }]}>
+          Tap anywhere to {isConnected ? "pause" : "activate"} protection
+        </Text>
+      </Pressable>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
   header: {
-    paddingBottom: Spacing.xs,
     paddingHorizontal: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    zIndex: 10,
   },
   headerContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    maxWidth: MaxContentWidth,
-    alignSelf: 'center',
-    width: '100%',
-    minHeight: 44,
+    height: 44,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   headerTitleGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
   headerIconCircle: {
     width: 32,
     height: 32,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
   headerTitle: {
     fontSize: 17,
-    fontWeight: '600',
-    letterSpacing: -0.4,
+    fontWeight: "600",
+    letterSpacing: -0.3,
     lineHeight: 20,
   },
   headerSubtitle: {
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: "500",
     lineHeight: 14,
+    marginTop: 1,
   },
   avatarButton: {
     width: 32,
     height: 32,
-    borderRadius: Radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  scroll: {
+  pressArea: {
     flex: 1,
-  },
-  scrollContent: {
-    paddingTop: Spacing.md,
     paddingHorizontal: Spacing.md,
-    alignItems: 'center',
-  },
-  contentWrapper: {
-    width: '100%',
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
+    alignItems: "center",
+    justifyContent: "space-between",
     maxWidth: MaxContentWidth,
+    width: "100%",
+    alignSelf: "center",
   },
-  greetingSection: {
-    paddingVertical: Spacing.xs,
+  greeting: {
+    width: "100%",
     paddingHorizontal: Spacing.xxs,
   },
   greetingTitle: {
-    fontSize: 27,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: "700",
     letterSpacing: -0.6,
-    lineHeight: 32,
+    lineHeight: 34,
   },
   greetingSubtitle: {
     fontSize: 15,
-    marginTop: 4,
     lineHeight: 20,
-  },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: Spacing.xl,
-    height: 210,
-  },
-  glowRing: {
-    position: 'absolute',
-    width: 218,
-    height: 218,
-    borderRadius: 109,
-    borderWidth: 1.5,
-  },
-  shieldButton: {
-    width: 172,
-    height: 172,
-    borderRadius: 86,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 4,
-    borderColor: 'rgba(255, 255, 255, 0.35)',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.32,
-    shadowRadius: 18,
-    elevation: 8,
-  },
-  shieldIconPill: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: 'rgba(255, 255, 255, 0.22)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 6,
-  },
-  shieldStatusText: {
-    fontSize: 19,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    letterSpacing: -0.3,
-  },
-  shieldSubText: {
-    fontSize: 11.5,
-    fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.9)',
     marginTop: 2,
   },
-  locationPillContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
+  centerGroup: {
+    alignItems: "center",
+    width: "100%",
+  },
+  hero: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.xs,
+  },
+  effectsLayer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  fillCenter: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  glowCircleXl: {
+    width: 320,
+    height: 320,
+    borderRadius: 160,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  glowCircleInner: {
+    width: 240,
+    height: 240,
+    borderRadius: 120,
+  },
+  pingRing: {
+    width: 208,
+    height: 208,
+    borderRadius: 104,
+    borderWidth: 1,
+  },
+  statusLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    letterSpacing: 1.4,
+    marginBottom: Spacing.xs,
+    textTransform: "uppercase",
+  },
+  earthContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: Spacing.xs,
+  },
+  stateText: {
+    fontSize: 32,
+    fontWeight: "800",
+    letterSpacing: 3,
+    marginTop: Spacing.xs,
   },
   locationPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 7,
-    paddingHorizontal: Spacing.md,
-    borderRadius: Radius.full,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: Radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
     gap: 7,
-    shadowColor: '#000000',
+    marginTop: Spacing.xl,
+    maxWidth: "100%",
+    shadowColor: "#000000",
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 1,
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
   },
   statusDot: {
-    width: 7,
-    height: 7,
+    width: 8,
+    height: 8,
     borderRadius: 4,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 0,
   },
-  flagEmoji: {
+  flagText: {
     fontSize: 14,
+    lineHeight: 18,
   },
-  locationPillText: {
+  locationCity: {
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "600",
+    letterSpacing: -0.1,
+  },
+  locationSeparator: {
+    fontSize: 11,
+    fontWeight: "400",
+  },
+  locationCountry: {
+    fontSize: 13,
+    fontWeight: "400",
+    letterSpacing: -0.1,
   },
   latencyBadge: {
-    paddingHorizontal: 5,
-    paddingVertical: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: Radius.full,
-    backgroundColor: 'rgba(52, 199, 89, 0.12)',
+    gap: 3,
+  },
+  boltIcon: {
+    marginTop: 0.5,
   },
   latencyText: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   changeText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: "600",
     marginLeft: 2,
   },
-  cardsContainer: {
-    gap: Spacing.sm,
-    width: '100%',
-  },
-  card: {
-    borderRadius: Radius.card,
-    padding: Spacing.md,
-    borderWidth: StyleSheet.hairlineWidth,
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 1,
-  },
-  cardHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-  },
-  cardIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cardHeaderFlex: {
-    flex: 1,
-  },
-  cardBadgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  cardLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  microBadge: {
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
-    borderRadius: Radius.full,
-  },
-  microBadgeText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  cardValue: {
-    fontSize: 22,
-    fontWeight: '700',
-    letterSpacing: -0.4,
-    marginTop: 2,
-  },
-  cardDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  progressBarTrack: {
-    width: '100%',
-    height: 6,
-    borderRadius: Radius.full,
-    marginTop: Spacing.sm,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    borderRadius: Radius.full,
-  },
-  networkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  networkLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    flex: 1,
-    paddingRight: Spacing.xs,
-  },
-  networkTextGroup: {
-    flex: 1,
-  },
-  networkTitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    letterSpacing: -0.2,
-  },
-  networkSubtitle: {
+  hint: {
     fontSize: 12,
-    marginTop: 1,
-  },
-  verifiedBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: Radius.full,
-  },
-  verifiedText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "500",
+    letterSpacing: 0.3,
+    textAlign: "center",
   },
 });
-

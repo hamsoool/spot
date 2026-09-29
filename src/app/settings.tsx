@@ -7,6 +7,7 @@ import { AppleIcon, IconName } from '@/components/ui/apple-icon';
 import { AppleSwitch } from '@/components/ui/apple-switch';
 import { BottomTabInset, MaxContentWidth, Spacing, Radius } from '@/constants/theme';
 import { BatteryOptimizationCard } from '@/components/battery-optimization-card';
+import { AccountSection } from '@/components/account-section';
 
 interface ToggleRowProps {
   icon: IconName;
@@ -177,6 +178,20 @@ export default function SettingsScreen() {
                 v2.4
               </Text>
             </View>
+          </View>
+
+          {/* Group 0: Account */}
+          <View style={styles.group}>
+            <Text style={[styles.groupLabel, { color: theme.textSecondary }]}>
+              Account
+            </Text>
+            <AccountSection
+              groupCardStyle={[
+                styles.groupCard,
+                { backgroundColor: theme.card, borderColor: theme.border },
+              ]}
+              rowStyle={styles.accountIdentityRow}
+            />
           </View>
 
           {/* Group 1: Safety & Privacy */}
@@ -432,6 +447,10 @@ const styles = StyleSheet.create({
   },
   rowTrailingText: {
     fontSize: 15,
+  },
+  accountIdentityRow: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
   },
   footnote: {
     fontSize: 12,

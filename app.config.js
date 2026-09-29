@@ -23,6 +23,7 @@ const fs = require('fs');
 const path = require('path');
 
 const FIREBASE_PLUGIN = '@react-native-firebase/app';
+const GOOGLE_SIGNIN_PLUGIN = '@react-native-google-signin/google-signin';
 const FIREBASE_FILE_ENV = 'GOOGLE_SERVICES_JSON';
 
 /** Path to ship to the plugin, a {missing} marker, or null when Firebase is not in this build. */
@@ -53,7 +54,7 @@ module.exports = ({ config }) => {
       '[app.config] google-services.json found - Firebase enabled (ANDROID_IMPLEMENTATION_PLAN.md A16)'
     );
     return withBase({
-      plugins: [...(base.plugins ?? []), FIREBASE_PLUGIN],
+      plugins: [...(base.plugins ?? []), FIREBASE_PLUGIN, GOOGLE_SIGNIN_PLUGIN],
       android: { ...base.android, googleServicesFile: firebaseFile },
       // Read at runtime by src/lib/firebase.ts. Means only "this binary was prebuilt with Firebase
       // native config", never "the network works" - every Firebase call site still needs a fallback.
