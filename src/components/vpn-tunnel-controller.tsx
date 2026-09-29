@@ -8,11 +8,11 @@
  * id the provisioning endpoint expects), and only a component mounted inside both providers
  * has both.
  *
- * Failure is a message, never a throw: provisioning problems (no API key, auth rejected,
- * offline) and native refusals (consent missing, foreground-service blocked) land in
+ * Failure is a message, never a throw: provisioning problems (no servers in this build, auth
+ * rejected, offline) and native refusals (consent missing, foreground-service blocked) land in
  * `tunnelError`, which Settings renders. Leaving the switch on with an error is deliberate —
- * the preference is still the user's, and `retryTunnel()` re-applies it after they fix the
- * cause.
+ * the preference is still the user's, and the uid is in `applyKey`, so a device that was still
+ * signing in re-applies the moment it has an identity.
  */
 import { useEffect, useRef } from 'react';
 
@@ -33,7 +33,6 @@ export function VpnTunnelController() {
     vpnEnabled,
     preferredServerRegion,
     firewallSettings,
-    tunnelRetryToken,
     setTunnelBusy,
     setTunnelError,
   } = useVpn();
@@ -50,9 +49,7 @@ export function VpnTunnelController() {
 
   const regionId = resolveRegionId(preferredServerRegion);
   const alwaysAllowed = firewallSettings.alwaysAllowedPackages;
-  const applyKey = vpnEnabled
-    ? `on:${regionId}:${uid ?? 'anonymous'}:${tunnelRetryToken}`
-    : `off:${tunnelRetryToken}`;
+  const applyKey = vpnEnabled ? `on:${regionId}:${uid ?? 'anonymous'}` : "off";
 
   // Native reports tunnel death asynchronously (revoked consent, engine failure); surface it
   // instead of leaving the switch lying about a tunnel that is gone.

@@ -264,8 +264,9 @@ export default function SettingsScreen() {
           </View>
 
 
-          {/* Group 3: VPN tunnel provisioning (Stage 9) — the switch, the endpoint and the API
-              key. Starting the tunnel itself is VpnTunnelController's job, mounted in _layout. */}
+          {/* Group 3: VPN tunnel (Stage 9) — one switch and one server name.
+              The app provisions the config itself; VpnTunnelController, mounted in
+              _layout, starts and stops the tunnel. */}
           <VpnTunnelCard />
 
           {/* Group 4: OEM battery onboarding (Stage 6) — reads every answer from the

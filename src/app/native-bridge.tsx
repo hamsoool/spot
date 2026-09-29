@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Link, Stack } from "expo-router";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useAppleTheme } from "@/hooks/use-theme";
@@ -11,6 +11,10 @@ import {
   type AppInfo,
   type ForegroundAppPayload,
 } from "@/native/VpnFirewall";
+import {
+  provisioningStatus,
+  writeManualTunnelConfig,
+} from "@/services/vpn-provisioning";
 import {
   BottomTabInset,
   MaxContentWidth,
@@ -52,6 +56,21 @@ export default function NativeBridgeScreen() {
     null,
   );
   const [log, setLog] = useState<{ id: number; text: string }[]>([]);
+  // Stage 9 developer override, for builds with no provisioning URL baked in yet: the Settings
+  // VPN switch reads the same stored config. Users never reach this screen.
+  const [wgConfig, setWgConfig] = useState("");
+  const [configSource, setConfigSource] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    void provisioningStatus().then((next) => {
+      if (!cancelled) setConfigSource(next.label);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const logId = useRef(0);
 
   const pushLog = useCallback((text: string) => {
@@ -140,6 +159,26 @@ export default function NativeBridgeScreen() {
 
   const onAppSettings = () =>
     run("app settings opened", () => permissions.openAppSettings());
+
+  const refreshConfigSource = useCallback(() => {
+    void provisioningStatus().then((next) => setConfigSource(next.label));
+  }, []);
+
+  // Both write through the service, which parses before storing — a broken paste fails here
+  // rather than as an unexplained tunnel error in Settings.
+  const onSaveTunnelConfig = () =>
+    run("tunnel config stored", async () => {
+      const result = await writeManualTunnelConfig(wgConfig);
+      if (!result.ok) throw new Error(result.message);
+      refreshConfigSource();
+    });
+
+  const onClearTunnelConfig = () =>
+    run("tunnel config cleared", async () => {
+      await writeManualTunnelConfig("");
+      setWgConfig("");
+      refreshConfigSource();
+    });
 
   return (
     <View style={[styles.root, { backgroundColor: theme.background }]}>
@@ -287,6 +326,51 @@ export default function NativeBridgeScreen() {
             </Text>
           )}
           <Text style={[styles.section, { color: theme.textSecondary }]}>
+            Stage 9 · tunnel config (developer only)
+          </Text>
+          <Text style={[styles.hint, { color: theme.textSecondary }]}>
+            Released builds get their WireGuard config from the provisioning service baked
+            into the binary (EXPO_PUBLIC_VPN_PROVISIONING_URL), authenticated with the
+            Firebase ID token — users type nothing. Until that service exists, paste a
+            wg-quick config here and the VPN switch in Settings connects through it.
+            {"\n"}Current source: {configSource ?? "checking"}
+          </Text>
+          <TextInput
+            value={wgConfig}
+            onChangeText={setWgConfig}
+            multiline
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder={"[Interface]\nPrivateKey = ...\nAddress = 10.0.0.2/32\n\n[Peer]\nPublicKey = ...\nEndpoint = host:51820"}
+            placeholderTextColor={theme.textTertiary}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.gray5,
+                borderColor: theme.border,
+                color: theme.text,
+              },
+            ]}
+          />
+          <View style={styles.buttons}>
+            <Pressable
+              disabled={busy}
+              onPress={onSaveTunnelConfig}
+              style={[styles.button, { backgroundColor: theme.palette.blue }]}
+            >
+              <Text style={styles.buttonText}>7 · Save tunnel config</Text>
+            </Pressable>
+            <Pressable
+              disabled={busy}
+              onPress={onClearTunnelConfig}
+              style={[styles.button, { backgroundColor: theme.gray5 }]}
+            >
+              <Text style={[styles.buttonText, { color: theme.text }]}>
+                8 · Clear
+              </Text>
+            </Pressable>
+          </View>
+          <Text style={[styles.section, { color: theme.textSecondary }]}>
             Native events
           </Text>
           {log.length === 0 ? (
@@ -379,6 +463,17 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.md,
     alignItems: "center",
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: Radius.md,
+    minHeight: 130,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    fontSize: 12,
+    lineHeight: 17,
+    fontFamily: "monospace",
+    textAlignVertical: "top",
   },
   card: {
     width: "100%",

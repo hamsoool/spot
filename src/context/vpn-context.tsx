@@ -132,9 +132,6 @@ export interface VpnContextType {
   /** True while provisioning or a tunnel transition is in flight. */
   tunnelBusy: boolean;
   setTunnelBusy: (busy: boolean) => void;
-  /** Bumped to re-apply the current intent (e.g. right after the API key is saved). */
-  tunnelRetryToken: number;
-  retryTunnel: () => void;
 
   /**
    * Stage 8: this state, projected into the `users/{uid}/settings/firewall` shape. The sync layer
@@ -229,8 +226,6 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
   const [vpnEnabled, setVpnEnabled] = useState(false);
   const [tunnelError, setTunnelError] = useState<string | null>(null);
   const [tunnelBusy, setTunnelBusy] = useState(false);
-  const [tunnelRetryToken, setTunnelRetryToken] = useState(0);
-  const retryTunnel = useCallback(() => setTunnelRetryToken((n) => n + 1), []);
 
   const firewallSettings = useMemo<FirewallSettings>(
     () => ({
@@ -307,8 +302,6 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
       setTunnelError,
       tunnelBusy,
       setTunnelBusy,
-      tunnelRetryToken,
-      retryTunnel,
       firewallSettings,
       applyRemoteSettings,
     }),
@@ -326,8 +319,6 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
       preferredServerRegion,
       tunnelError,
       tunnelBusy,
-      tunnelRetryToken,
-      retryTunnel,
       firewallSettings,
       applyRemoteSettings,
     ]
