@@ -8,6 +8,7 @@ import { AppleSwitch } from '@/components/ui/apple-switch';
 import { BottomTabInset, MaxContentWidth, Spacing, Radius } from '@/constants/theme';
 import { BatteryOptimizationCard } from '@/components/battery-optimization-card';
 import { AccountSection } from '@/components/account-section';
+import { VpnTunnelCard } from '@/components/vpn-tunnel-card';
 
 interface ToggleRowProps {
   icon: IconName;
@@ -263,11 +264,15 @@ export default function SettingsScreen() {
           </View>
 
 
-          {/* Group 3: OEM battery onboarding (Stage 6) — reads every answer from the
+          {/* Group 3: VPN tunnel provisioning (Stage 9) — the switch, the endpoint and the API
+              key. Starting the tunnel itself is VpnTunnelController's job, mounted in _layout. */}
+          <VpnTunnelCard />
+
+          {/* Group 4: OEM battery onboarding (Stage 6) — reads every answer from the
               device, since both grants happen in Settings rather than in a dialog. */}
           <BatteryOptimizationCard />
 
-          {/* Group 4: Help & Support */}
+          {/* Group 5: Help & Support */}
           <View style={styles.group}>
             <Text style={[styles.groupLabel, { color: theme.textSecondary }]}>
               Help &amp; Support

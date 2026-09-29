@@ -115,6 +115,27 @@ export interface VpnContextType {
   compressPictures: boolean;
   setCompressPictures: (val: boolean) => void;
 
+  // --- Stage 9: VPN tunnel --------------------------------------------------
+  /** Whether the user asked for the WireGuard tunnel (Settings → VPN tunnel). */
+  vpnEnabled: boolean;
+  setVpnEnabled: (val: boolean) => void;
+  /**
+   * Which location the tunnel uses (a LOCATIONS id). The tunnel controller resolves it —
+   * exact id, then a country prefix such as "sg", then the first location — and
+   * re-provisions whenever it changes. This is the plan's `preferredServerRegion`.
+   */
+  preferredServerRegion: string;
+  setPreferredServerRegion: (region: string) => void;
+  /** Set by the tunnel controller: the last provisioning or tunnel failure, if any. */
+  tunnelError: string | null;
+  setTunnelError: (message: string | null) => void;
+  /** True while provisioning or a tunnel transition is in flight. */
+  tunnelBusy: boolean;
+  setTunnelBusy: (busy: boolean) => void;
+  /** Bumped to re-apply the current intent (e.g. right after the API key is saved). */
+  tunnelRetryToken: number;
+  retryTunnel: () => void;
+
   /**
    * Stage 8: this state, projected into the `users/{uid}/settings/firewall` shape. The sync layer
    * watches it and mirrors it to AsyncStorage + Firestore; plan fields with no UI owner yet
@@ -198,17 +219,24 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  // Stage 8 fields that the plan's schema stores but no screen owns yet. Keep them in one place so
-  // the first stage that does own one (Stage 9's region picker, the allow-list UI) only has to
-  // replace a useState here, and the Firestore document keeps its shape in the meantime.
+  // Stage 8 fields the schema stores. Stage 9 gave `preferredServerRegion` an owner (the
+  // region picker in the Data tab) and `vpnEnabled` a toggle (Settings → VPN tunnel); the
+  // allow-list UI remains the one field with no screen behind it.
   const [alwaysAllowedPackages] = useState<string[]>(DEFAULT_FIREWALL_SETTINGS.alwaysAllowedPackages);
-  const [preferredServerRegion] = useState(DEFAULT_FIREWALL_SETTINGS.preferredServerRegion);
+  const [preferredServerRegion, setPreferredServerRegion] = useState<string>(
+    DEFAULT_FIREWALL_SETTINGS.preferredServerRegion,
+  );
+  const [vpnEnabled, setVpnEnabled] = useState(false);
+  const [tunnelError, setTunnelError] = useState<string | null>(null);
+  const [tunnelBusy, setTunnelBusy] = useState(false);
+  const [tunnelRetryToken, setTunnelRetryToken] = useState(0);
+  const retryTunnel = useCallback(() => setTunnelRetryToken((n) => n + 1), []);
 
   const firewallSettings = useMemo<FirewallSettings>(
     () => ({
       firewallEnabled: true,
       alwaysAllowedPackages,
-      vpnEnabled: false,
+      vpnEnabled,
       preferredServerRegion,
       publicWifiProtection,
       pauseOnDrop,
@@ -220,6 +248,7 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       alwaysAllowedPackages,
+      vpnEnabled,
       preferredServerRegion,
       publicWifiProtection,
       pauseOnDrop,
@@ -238,6 +267,11 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
     setVideoQualitySaver(settings.videoQualitySaver);
     setCompressPictures(settings.compressPictures);
     setSaverStrength(settings.saverStrength);
+    // Stage 9: the tunnel preference is part of the schema, so a reinstall restores it. The
+    // controller — not this write — is what actually provisions and starts the tunnel, and
+    // it reports a missing consent/provisioning setup as `tunnelError` instead of throwing.
+    setVpnEnabled(settings.vpnEnabled);
+    setPreferredServerRegion(settings.preferredServerRegion);
     // Match by id against the apps this build knows about; ids the app no longer ships are
     // dropped, and apps added since the document was written keep their local default.
     setSaverApps((apps) =>
@@ -265,6 +299,16 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
       setVideoQualitySaver,
       compressPictures,
       setCompressPictures,
+      vpnEnabled,
+      setVpnEnabled,
+      preferredServerRegion,
+      setPreferredServerRegion,
+      tunnelError,
+      setTunnelError,
+      tunnelBusy,
+      setTunnelBusy,
+      tunnelRetryToken,
+      retryTunnel,
       firewallSettings,
       applyRemoteSettings,
     }),
@@ -278,6 +322,12 @@ export function VpnProvider({ children }: { children: React.ReactNode }) {
       blockTrackers,
       videoQualitySaver,
       compressPictures,
+      vpnEnabled,
+      preferredServerRegion,
+      tunnelError,
+      tunnelBusy,
+      tunnelRetryToken,
+      retryTunnel,
       firewallSettings,
       applyRemoteSettings,
     ]

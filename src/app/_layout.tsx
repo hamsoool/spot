@@ -5,6 +5,7 @@ import { useColorScheme } from 'react-native';
 import AppTabs from '@/components/app-tabs';
 import { AppGate } from '@/components/app-gate';
 import { SettingsSync } from '@/components/settings-sync';
+import { VpnTunnelController } from '@/components/vpn-tunnel-controller';
 import { FirebaseProvider } from '@/context/firebase-context';
 import { VpnProvider } from '@/context/vpn-context';
 
@@ -17,6 +18,7 @@ export default function TabLayout() {
       <VpnProvider>
         <FirebaseProvider>
           <SettingsSync />
+          <VpnTunnelController />
           <AppTabs />
           <AppGate />
         </FirebaseProvider>

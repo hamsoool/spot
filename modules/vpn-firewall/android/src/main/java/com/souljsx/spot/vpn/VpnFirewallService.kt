@@ -12,8 +12,13 @@ import android.os.Handler
 import android.os.Looper
 import android.os.ParcelFileDescriptor
 import androidx.core.app.NotificationCompat
+import com.souljsx.spot.vpn.tunnel.TunnelClient
+import com.souljsx.spot.vpn.tunnel.TunnelConfig
+import com.souljsx.spot.vpn.tunnel.WireGuardTunnelClient
+import com.wireguard.android.backend.GoBackend
 import java.io.FileInputStream
 import java.io.IOException
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
 // Stage 2: local firewall / sinkhole mode. Captured (non-bypassing) apps have
@@ -25,7 +30,18 @@ import java.util.concurrent.atomic.AtomicLong
 // establishing a new interface and then closing the old descriptor (the new
 // establish() already deactivates the previous interface, so no traffic is left
 // un-captured in between).
-class VpnFirewallService : VpnService() {
+// Stage 9: the same service also hosts the WireGuard tunnel, so it extends
+// GoBackend.VpnService (the WireGuard library's own VpnService subclass) instead
+// of android.net.VpnService. Facts this relies on, read from the library source:
+//  * GoBackend.setState(UP, config) calls getBuilder() on this instance and applies
+//    the config's ExcludedApplications through addDisallowedApplication — the same
+//    bypass set the sinkhole uses, so the per-app gate is identical in both modes.
+//  * `setBlocking(true)` there only puts the TUN file descriptor in blocking mode
+//    (AOSP Builder#setBlocking); it does not block disallowed apps.
+//  * The library protects its own sockets, and on tunnel DOWN it calls stopSelf().
+//    stopSelf() is overridden below so a mode switch can absorb that call and keep
+//    running instead of dying with the tunnel.
+class VpnFirewallService : GoBackend.VpnService() {
 
   private var tunInterface: ParcelFileDescriptor? = null
   private var readerThread: Thread? = null
@@ -38,6 +54,25 @@ class VpnFirewallService : VpnService() {
   private var foregroundPackage: String? = null
   private var appliedBypass: List<String> = emptyList()
   private var watcher: ForegroundAppWatcher? = null
+
+  // --- Stage 9: VPN tunnel mode ----------------------------------------------
+
+  /** Null until the first VPN-mode start; one client per service instance. */
+  private var tunnelClient: WireGuardTunnelClient? = null
+
+  /** Last provisioned config, kept so a bypass-set change can re-apply it. */
+  private var tunnelConfig: TunnelConfig? = null
+
+  /**
+   * Set immediately before a deliberate tunnel disconnect. GoBackend's DOWN path calls
+   * stopSelf() on this service; without absorbing that call the service would die during a
+   * mode switch and take the firewall down with it. See the stopSelf() override.
+   */
+  private var suppressNextStopSelf = false
+
+  // establish() and the library's DNS retry loop both block, so tunnel work never runs on
+  // the main thread (plan §5). A single thread also serialises connect/disconnect updates.
+  private val tunnelExecutor = Executors.newSingleThreadExecutor()
 
   // Stage 7: bytes read off the TUN and discarded since the last flush. Incremented by
   // the reader thread only, then persisted on a throttle so an OS restart does not lose
@@ -92,9 +127,34 @@ class VpnFirewallService : VpnService() {
       alwaysAllowed = persistedAlwaysAllowed(this)
     }
 
-    applyBypass()
+    // Stage 9: a JSON TunnelConfig in the intent means "VPN mode"; a fresh intent without one
+    // while a tunnel is up means the user turned VPN mode off, and neither means the sinkhole.
+    // Both modes share this service, the watcher, the bypass set and the notification — only
+    // the interface owner differs.
+    val vpnJson = intent?.getStringExtra(EXTRA_VPN_CONFIG)
+    if (vpnJson != null && vpnJson.isNotBlank()) {
+      startVpnMode(vpnJson)
+    } else if (intent != null && tunnelClient?.isConnected() == true) {
+      stopVpnMode()
+    } else {
+      applyBypass()
+    }
     startWatcher()
     return START_STICKY
+  }
+
+  /**
+   * GoBackend's tunnel-DOWN path calls stopSelf() on this service. A deliberate mode switch
+   * sets [suppressNextStopSelf] first so that call does not kill the firewall along with the
+   * tunnel; every other stop path (user turned protection off, Android reclaiming memory)
+   * passes through untouched.
+   */
+  override fun stopSelf() {
+    if (suppressNextStopSelf) {
+      suppressNextStopSelf = false
+      return
+    }
+    super.stopSelf()
   }
 
   // System revoked VPN consent (user tapped the key icon, another VPN started).
@@ -127,7 +187,13 @@ class VpnFirewallService : VpnService() {
   private fun handleForegroundChange(pkg: String?) {
     if (pkg == foregroundPackage) return
     foregroundPackage = pkg
-    applyBypass()
+    if (tunnelClient?.isConnected() == true) {
+      // VPN mode: the bypass set lives inside the tunnel's ExcludedApplications, so the
+      // change is applied by re-establishing the tunnel instead of by the sinkhole.
+      reapplyTunnelBypass()
+    } else {
+      applyBypass()
+    }
     FirewallEvents.emit(
       "foregroundAppChanged",
       mapOf(
@@ -151,6 +217,83 @@ class VpnFirewallService : VpnService() {
       BlockLogStore.syncBypass(this, bypass, System.currentTimeMillis())
       updateNotification()
     }
+  }
+
+  // --- Stage 9: VPN mode -----------------------------------------------------
+
+  /** START: parse the provisioned config and hand it to a fresh WireGuard client. */
+  private fun startVpnMode(configJson: String) {
+    val parsed =
+      try {
+        TunnelConfig.fromJson(configJson)
+      } catch (e: Exception) {
+        FirewallEvents.emit(
+          "stateChanged",
+          mapOf(
+            "running" to true,
+            "vpn" to false,
+            "error" to (e.message ?: "Invalid tunnel config"),
+          ),
+        )
+        return
+      }
+
+    tunnelConfig = parsed
+    // Nothing is sinkholed once the tunnel owns captured traffic, so close any interval the
+    // block log left open — otherwise those minutes read as "blocked" while they were relayed.
+    BlockLogStore.closeAll(this, System.currentTimeMillis())
+
+    val client =
+      tunnelClient
+        ?: WireGuardTunnelClient(this).also { created ->
+          created.setListener(
+            object : TunnelClient.Listener {
+              override fun onTunnelStateChanged(connected: Boolean, error: String?) {
+                mainHandler.post { onTunnelStateChanged(connected, error) }
+              }
+            }
+          )
+          tunnelClient = created
+        }
+
+    val excluded = currentBypass()
+    tunnelExecutor.execute { client.connect(parsed.withExcludedApplications(excluded)) }
+  }
+
+  /** Mode switch back to the sinkhole: drop the tunnel, then re-establish our own interface. */
+  private fun stopVpnMode() {
+    val client = tunnelClient ?: return
+    tunnelExecutor.execute {
+      // Absorb the library's stopSelf() so this service survives and can bring the sinkhole
+      // interface up immediately after the tunnel is gone.
+      suppressNextStopSelf = true
+      client.disconnect()
+      mainHandler.post {
+        if (tunnelClient?.isConnected() != true) {
+          // Force applyBypass() past its no-change guard: no interface is up right now.
+          appliedBypass = emptyList()
+          applyBypass()
+        }
+      }
+    }
+  }
+
+  /** Foreground change while tunneled: same bypass semantics, new ExcludedApplications. */
+  private fun reapplyTunnelBypass() {
+    val client = tunnelClient ?: return
+    val excluded = currentBypass()
+    tunnelExecutor.execute { client.updateExcludedApplications(excluded) }
+  }
+
+  /** The one definition of "allowed": always-allowed + foreground + this app. */
+  private fun currentBypass(): List<String> =
+    (alwaysAllowed + listOfNotNull(foregroundPackage, packageName)).distinct()
+
+  private fun onTunnelStateChanged(connected: Boolean, error: String?) {
+    updateNotification()
+    val payload = mutableMapOf<String, Any?>("running" to true, "vpn" to connected)
+    if (error != null) payload["error"] = error
+    FirewallEvents.emit("stateChanged", payload)
   }
 
   // Returns true when the new policy is live on the interface.
@@ -282,10 +425,16 @@ class VpnFirewallService : VpnService() {
   private fun buildNotification(): Notification {
     ensureNotificationChannel()
     val label = foregroundPackage?.let { ForegroundAppWatcher.foregroundLabel(this, it) }
+    val tunnelActive = tunnelClient?.isConnected() == true
     return NotificationCompat.Builder(this, CHANNEL_ID)
-      .setContentTitle("Data Saver firewall")
+      .setContentTitle(if (tunnelActive) "VPN + data saver" else "Data Saver firewall")
       .setContentText(
-        if (label != null) "Allowed: $label" else "Only allowed apps can use mobile data."
+        when {
+          tunnelActive && label != null -> "Tunnel on · allowed: $label"
+          tunnelActive -> "Tunnel on. Only allowed apps can use mobile data."
+          label != null -> "Allowed: $label"
+          else -> "Only allowed apps can use mobile data."
+        }
       )
       .setSmallIcon(android.R.drawable.ic_dialog_info)
       .setOngoing(true)
@@ -322,6 +471,14 @@ class VpnFirewallService : VpnService() {
   }
 
   override fun onDestroy() {
+    // Stage 9: drop the tunnel before the process tears down and absorb the library's
+    // stopSelf() — the service is already going away, and re-entering stopSelf() here would
+    // only race the framework. shutdown() (not shutdownNow) lets the queued teardown finish.
+    suppressNextStopSelf = true
+    tunnelExecutor.execute { tunnelClient?.disconnect() }
+    tunnelClient = null
+    tunnelConfig = null
+    tunnelExecutor.shutdown()
     watcher?.stop()
     watcher = null
     mainHandler.removeCallbacksAndMessages(null)
@@ -347,6 +504,13 @@ class VpnFirewallService : VpnService() {
     // addDisallowedApplication(): these packages are excluded from the tunnel,
     // i.e. they keep working; everyone else is captured and sinkholed.
     const val EXTRA_ALWAYS_ALLOWED = "extra_always_allowed_packages"
+
+    /**
+     * Stage 9: a JSON TunnelConfig (see TunnelConfig.fromJson). Present and non-blank = VPN
+     * mode; a fresh intent without it while a tunnel is up = the user turned VPN mode off.
+     */
+    const val EXTRA_VPN_CONFIG = "extra_vpn_config"
+
     const val NOTIFICATION_ID = 1001
     private const val CHANNEL_ID = "vpn_firewall"
 
@@ -362,6 +526,9 @@ class VpnFirewallService : VpnService() {
     private var instance: VpnFirewallService? = null
 
     fun isRunning(): Boolean = instance != null
+
+    /** Stage 9: true while the WireGuard tunnel (not just the sinkhole) is up. */
+    fun isVpnRunning(): Boolean = instance?.tunnelClient?.isConnected() == true
 
     // The bypass list has to survive process death, not just intent loss: Android restarts a
     // START_STICKY service whenever it likes with a null intent, and a fresh instance holding

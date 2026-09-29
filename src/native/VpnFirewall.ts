@@ -21,6 +21,8 @@ export interface StateChangedPayload {
   running?: boolean;
   watching?: boolean;
   error?: string;
+  /** Stage 9: whether the up interface is the WireGuard tunnel (absent = unchanged). */
+  vpn?: boolean;
 }
 
 export interface StatsUpdatedPayload {
@@ -89,6 +91,8 @@ export interface DataUsageSnapshot {
   hasUsageAccess: boolean;
   /** Whether the tunnel is up right now. */
   running: boolean;
+  /** Stage 9: whether the up interface is the WireGuard tunnel (false = plain sinkhole). */
+  vpnRunning: boolean;
   /** Device-wide mobile bytes over the window; null when the OS refused to answer. */
   mobileBytes: number | null;
   /**
@@ -108,6 +112,8 @@ declare class VpnFirewallNativeModule extends NativeModule<VpnFirewallModuleEven
   prepareVpn(): Promise<boolean>;
   startFirewall(alwaysAllowed: string[]): Promise<void>;
   stopFirewall(): Promise<void>;
+  startVpnTunnel(configJson: string, alwaysAllowed: string[]): Promise<void>;
+  stopVpnTunnel(alwaysAllowed: string[]): Promise<void>;
   getInstalledApps(): Promise<AppInfo[]>;
   hasUsageAccessPermission(): Promise<boolean>;
   openUsageAccessSettings(): Promise<void>;
@@ -227,6 +233,21 @@ export const VpnFirewall = {
   startFirewall: (alwaysAllowed: string[]): Promise<void> =>
     withModule((n) => n.startFirewall(alwaysAllowed)),
   stopFirewall: (): Promise<void> => withModule((n) => n.stopFirewall()),
+  /**
+   * Stage 9: bring the WireGuard tunnel up inside the same service. `config` is the
+   * provisioned tunnel (see src/services/vpn-provisioning.ts); the service rewrites its
+   * ExcludedApplications on every foreground change, so `alwaysAllowed` is only the
+   * starting bypass set. Rejects `VPN_NOT_PREPARED`, `INVALID_TUNNEL_CONFIG` and
+   * `FGS_START_NOT_ALLOWED`, exactly like {@link VpnFirewall.startFirewall}.
+   */
+  startVpnTunnel: (config: VpnTunnelConfig, alwaysAllowed: string[]): Promise<void> =>
+    withModule((n) => n.startVpnTunnel(JSON.stringify(config), alwaysAllowed)),
+  /**
+   * Mode switch back to the sinkhole — the firewall keeps running. Stopping protection
+   * entirely is still {@link VpnFirewall.stopFirewall}.
+   */
+  stopVpnTunnel: (alwaysAllowed: string[]): Promise<void> =>
+    withModule((n) => n.stopVpnTunnel(alwaysAllowed)),
   getInstalledApps: (): Promise<AppInfo[]> =>
     withModule((n) => n.getInstalledApps()),
   /** Usage Access is "special access": no runtime dialog exists, so this only
@@ -281,3 +302,30 @@ export const VpnFirewall = {
   ): Promise<DataUsageSnapshot> =>
     withModule((n) => n.getDataUsage(window, packages)),
 };
+
+/**
+ * Stage 9: the fields `TunnelConfig.kt` consumes, all in wg-quick `.conf` syntax.
+ * `src/services/vpn-provisioning.ts` turns the operator's config text into this shape.
+ *
+ * `excludedApplications` is rewritten natively on every foreground-app change (the bypass
+ * set), so the value passed here is only the starting point for the first establish.
+ */
+export interface VpnTunnelConfig {
+  /** Interface name shown in Android's VPN UI. Defaults to "spot-vpn" natively. */
+  name?: string;
+  privateKey: string;
+  /** e.g. "10.7.0.2/32, fd00::2/128". */
+  addresses: string;
+  dnsServers?: string | null;
+  mtu?: number | null;
+  peerPublicKey: string;
+  /** "host:port". */
+  endpoint: string;
+  /** "0.0.0.0/0, ::/0" for a full tunnel. */
+  allowedIps: string;
+  presharedKey?: string | null;
+  persistentKeepalive?: number | null;
+  excludedApplications?: string[];
+  regionId?: string | null;
+}
+

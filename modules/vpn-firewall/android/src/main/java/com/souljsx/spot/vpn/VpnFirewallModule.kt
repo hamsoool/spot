@@ -141,6 +141,73 @@ class VpnFirewallModule : Module() {
       promise.resolve(null)
     }
 
+    // Stage 9: same service, same consent gate and the same bypass list — the TunnelConfig
+    // JSON is what makes the service host the WireGuard tunnel instead of the sinkhole. The
+    // service rewrites the config's ExcludedApplications on every foreground change, so the
+    // bypass passed here is only the starting set.
+    AsyncFunction("startVpnTunnel") { configJson: String, alwaysAllowed: List<String>, promise: Promise ->
+      val context = appContext.reactContext ?: run {
+        promise.reject("NO_CONTEXT", "React context is not available.", null)
+        return@AsyncFunction
+      }
+      if (configJson.isBlank()) {
+        promise.reject("INVALID_TUNNEL_CONFIG", "The tunnel config is empty.", null)
+        return@AsyncFunction
+      }
+      if (VpnService.prepare(context) != null) {
+        promise.reject(
+          "VPN_NOT_PREPARED",
+          "The system VPN consent dialog has not been accepted yet.",
+          null,
+        )
+        return@AsyncFunction
+      }
+      val bypass = (alwaysAllowed + context.packageName).distinct()
+      val intent =
+        Intent(context, VpnFirewallService::class.java)
+          .putStringArrayListExtra(EXTRA_ALWAYS_ALLOWED, ArrayList(bypass))
+          .putExtra(EXTRA_VPN_CONFIG, configJson)
+      try {
+        ContextCompat.startForegroundService(context, intent)
+      } catch (e: Exception) {
+        promise.reject(
+          "FGS_START_NOT_ALLOWED",
+          "Android refused to start the VPN service (${e.javaClass.simpleName}). " +
+            "Bring the app to the foreground and try again.",
+          e,
+        )
+        return@AsyncFunction
+      }
+      promise.resolve(null)
+    }
+
+    /**
+     * Turning the tunnel off is a *mode switch*, not a stop: a fresh intent without the
+     * config makes the running service drop the tunnel and re-establish the sinkhole, so the
+     * firewall survives. Stopping protection entirely stays stopFirewall().
+     */
+    AsyncFunction("stopVpnTunnel") { alwaysAllowed: List<String>, promise: Promise ->
+      val context = appContext.reactContext ?: run {
+        promise.reject("NO_CONTEXT", "React context is not available.", null)
+        return@AsyncFunction
+      }
+      val bypass = (alwaysAllowed + context.packageName).distinct()
+      val intent =
+        Intent(context, VpnFirewallService::class.java)
+          .putStringArrayListExtra(EXTRA_ALWAYS_ALLOWED, ArrayList(bypass))
+      try {
+        ContextCompat.startForegroundService(context, intent)
+      } catch (e: Exception) {
+        promise.reject(
+          "FGS_START_NOT_ALLOWED",
+          "Android refused to start the firewall service (${e.javaClass.simpleName}).",
+          e,
+        )
+        return@AsyncFunction
+      }
+      promise.resolve(null)
+    }
+
     AsyncFunction("stopFirewall") { promise: Promise ->
       val context = appContext.reactContext ?: run {
         promise.reject("NO_CONTEXT", "React context is not available.", null)
@@ -436,6 +503,9 @@ class VpnFirewallModule : Module() {
           "windowEnd" to now.toDouble(),
           "hasUsageAccess" to hasUsageAccess,
           "running" to running,
+          // Stage 9: whether the WireGuard tunnel (not just the sinkhole) is up, so the
+          // dashboard can label the mode it is reporting on.
+          "vpnRunning" to VpnFirewallService.isVpnRunning(),
           "mobileBytes" to NetworkStatsReader.deviceMobileBytes(context, start, now)?.toDouble(),
           "droppedBytes" to NetworkStatsReader.droppedBytes(context, start, now).toDouble(),
           "apps" to apps,
@@ -467,6 +537,7 @@ class VpnFirewallModule : Module() {
     private const val PREFS = "vpn_firewall"
     private const val PREF_NOTIFICATIONS_ASKED = "notifications_asked"
     private const val EXTRA_ALWAYS_ALLOWED = VpnFirewallService.EXTRA_ALWAYS_ALLOWED
+    private const val EXTRA_VPN_CONFIG = VpnFirewallService.EXTRA_VPN_CONFIG
 
     // Stage 7: each uid is one binder round-trip, and the report is capped at what a
     // dashboard can show anyway.

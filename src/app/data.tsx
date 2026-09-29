@@ -18,6 +18,7 @@ import { AppleIcon, IconName } from '@/components/ui/apple-icon';
 import { AppleSwitch } from '@/components/ui/apple-switch';
 import { BottomTabInset, MaxContentWidth, Spacing, Radius } from '@/constants/theme';
 import { DataUsageCard } from '@/components/data-usage-card';
+import { resolveRegionId } from '@/components/vpn-tunnel-controller';
 
 const STRENGTHS: { key: DataSaverStrength; label: string }[] = [
   { key: 'normal', label: 'Normal' },
@@ -103,7 +104,15 @@ export default function DataScreen() {
 
 function ConnectionSection() {
   const theme = useAppleTheme();
-  const { selectedLocation, selectLocation } = useVpn();
+  const {
+    selectedLocation,
+    selectLocation,
+    vpnEnabled,
+    preferredServerRegion,
+    setPreferredServerRegion,
+  } = useVpn();
+  // The same list is the plan's region picker: the row the tunnel will provision against.
+  const tunnelRegionId = resolveRegionId(preferredServerRegion);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<FilterKey>('all');
 
@@ -205,7 +214,12 @@ function ConnectionSection() {
           return (
             <Pressable
               key={location.id}
-              onPress={() => selectLocation(location)}
+              onPress={() => {
+                selectLocation(location);
+                // Choosing a place here is also what the Stage 9 tunnel provisions against,
+                // so the picker in this list and the switch in Settings describe one server.
+                setPreferredServerRegion(location.id);
+              }}
               accessibilityRole="button"
               accessibilityLabel={`${location.city}, ${location.country}`}
               accessibilityState={{ selected: isSelected }}
@@ -234,6 +248,15 @@ function ConnectionSection() {
                 </View>
               </View>
               <View style={styles.locationRight}>
+                {vpnEnabled && tunnelRegionId === location.id ? (
+                  <View
+                    style={[styles.tunnelBadge, { backgroundColor: theme.blueBadgeBg }]}
+                    accessibilityLabel="The VPN tunnel uses this server">
+                    <Text style={[styles.tunnelBadgeText, { color: theme.blueBadgeText }]}>
+                      VPN
+                    </Text>
+                  </View>
+                ) : null}
                 <View
                   style={[styles.speedBadge, { backgroundColor: `${speed.color}1F` }]}>
                   <View style={[styles.speedDot, { backgroundColor: speed.color }]} />
@@ -562,6 +585,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
+  },
+  tunnelBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: Radius.full,
+  },
+  tunnelBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   speedBadge: {
     flexDirection: 'row',
